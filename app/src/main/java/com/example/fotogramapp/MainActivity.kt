@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -15,28 +16,21 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.ui.theme.AppTheme
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.example.fotogramapp.navigation.Login
+import com.example.fotogramapp.navigation.Navigation
+import com.example.fotogramapp.ui.theme.FotogramTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            AppTheme {
-                Scaffold(modifier = Modifier
-                    .fillMaxSize()
-                    .statusBarsPadding()
-                ) { innerPadding ->
-                    Column(
-                        Modifier
-                            .padding(innerPadding)
-                    ) {
-                        Text("Scopri nuovi luoghi", style = MaterialTheme.typography.headlineLarge)
-                        Text("Connettiti attraverso le immagini", style = MaterialTheme.typography.bodyLarge)
-                        Button(onClick = { }) {
-                            Text("Inizia", style = MaterialTheme.typography.labelLarge)
-                        }
-                    }
+            FotogramTheme() {
+                DefaultScaffold {
+                    Navigation()
                 }
             }
         }
@@ -44,17 +38,44 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
+fun DefaultScaffold(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+    Scaffold(modifier = modifier
+        .fillMaxSize()
+    ) { innerPadding ->
+        Box(
+            Modifier
+                .statusBarsPadding()
+                .padding(horizontal = 25.dp)
+        ) {
+            content()
+        }
+    }
+}
+
+@Composable
+fun HelloWorld(modifier: Modifier = Modifier, navController: NavHostController = rememberNavController()) {
+    Column(
+        modifier
+    ) {
+        Text("Scopri nuovi luoghi", style = MaterialTheme.typography.headlineLarge)
+        Text("Connettiti attraverso le immagini", style = MaterialTheme.typography.bodyLarge)
+        Button(
+            onClick = {
+                navController.navigate(Login("test", "test"))
+            },
+
+            ) {
+            Text("Inizia", style = MaterialTheme.typography.labelLarge)
+        }
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    AppTheme {
-        Greeting("Android")
+    FotogramTheme(true) {
+        DefaultScaffold {
+            HelloWorld()
+        }
     }
 }

@@ -1,4 +1,4 @@
-package com.example.ui.theme
+package com.example.fotogramapp.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
@@ -21,49 +21,43 @@ val Nunito = FontFamily(
     Font(R.font.nunito_variable, FontWeight.Bold)
 )
 
-val AppTypography = Typography(
+val Typography = Typography(
 
     // Headings (Inter)
     headlineLarge = TextStyle(
         fontFamily = Inter,
-        fontWeight = FontWeight.Bold,
-        fontSize = 30.sp,
-        color = NeutralDark
+        fontWeight = FontWeight.ExtraBold,
+        fontSize = 35.sp
     ),
 
     headlineMedium = TextStyle(
         fontFamily = Inter,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 24.sp,
-        color = NeutralDark
+        fontWeight = FontWeight.Bold,
+        fontSize = 24.sp
     ),
 
     headlineSmall = TextStyle(
         fontFamily = Inter,
-        fontWeight = FontWeight.Medium,
-        fontSize = 20.sp,
-        color = NeutralDark
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 20.sp
     ),
 
     // Body (Nunito)
     bodyLarge = TextStyle(
         fontFamily = Nunito,
         fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        color = NeutralGrey
+        fontSize = 20.sp
     ),
 
     bodyMedium = TextStyle(
         fontFamily = Nunito,
         fontWeight = FontWeight.Normal,
-        fontSize = 14.sp,
-        color = NeutralGrey
+        fontSize = 16.sp
     ),
 
     labelLarge = TextStyle(
         fontFamily = Inter,
-        fontWeight = FontWeight.Medium,
-        fontSize = 14.sp,
-        color = Accent
+        fontWeight = FontWeight.Light,
+        fontSize = 16.sp
     )
 )
