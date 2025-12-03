@@ -19,63 +19,28 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.fotogramapp.navigation.Login
-import com.example.fotogramapp.navigation.Navigation
+import com.example.fotogramapp.app.FotogramApp
+import com.example.fotogramapp.navigation.Navigator
 import com.example.fotogramapp.ui.theme.FotogramTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         setContent {
-            FotogramTheme() {
-                DefaultScaffold {
-                    Navigation()
-                }
+            FotogramTheme(false) {
+                FotogramApp()
             }
         }
     }
 }
 
-@Composable
-fun DefaultScaffold(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
-    Scaffold(modifier = modifier
-        .fillMaxSize()
-    ) { innerPadding ->
-        Box(
-            Modifier
-                .statusBarsPadding()
-                .padding(horizontal = 25.dp)
-        ) {
-            content()
-        }
-    }
-}
-
-@Composable
-fun HelloWorld(modifier: Modifier = Modifier, navController: NavHostController = rememberNavController()) {
-    Column(
-        modifier
-    ) {
-        Text("Scopri nuovi luoghi", style = MaterialTheme.typography.headlineLarge)
-        Text("Connettiti attraverso le immagini", style = MaterialTheme.typography.bodyLarge)
-        Button(
-            onClick = {
-                navController.navigate(Login("test", "test"))
-            },
-
-            ) {
-            Text("Inizia", style = MaterialTheme.typography.labelLarge)
-        }
-    }
-}
 
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    FotogramTheme(true) {
-        DefaultScaffold {
-            HelloWorld()
-        }
+    FotogramTheme(false) {
+        FotogramApp()
     }
 }

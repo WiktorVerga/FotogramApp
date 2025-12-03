@@ -6,6 +6,15 @@ import kotlinx.serialization.Serializable
 @Serializable
 object SignUp
 
+@Serializable
+object Discover
+
+@Serializable
+object CreatePost
+
 //Route with parameters
 @Serializable
-data class Login(val email: String, val password: String)
+data class Profile(val id: String, val isUsers: Boolean)
+
+@Serializable
+data class Map(val startingLongitude: Double, val startingLatitude: Double, val zoom: Double)
