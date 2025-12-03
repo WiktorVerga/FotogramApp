@@ -7,27 +7,29 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.example.fotogramapp.navigation.*
 import com.example.fotogramapp.ui.theme.Icons
 
 @Composable
 fun Navbar(modifier: Modifier = Modifier, navController: NavHostController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val destination = navBackStackEntry?.destination
-    val currentRoute = destination?.route
+    val currentDestination = navBackStackEntry?.destination
 
 
     NavigationBar(
         modifier =
             modifier
                 .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)),
-        windowInsets = NavigationBarDefaults.windowInsets
+        windowInsets = NavigationBarDefaults.windowInsets,
+        containerColor = MaterialTheme.colorScheme.secondary,
     ) {
         NavigationBarItem(
-            selected = destination?.equals(Discover) == true,
+            selected = currentDestination.isRoute<Discover>(),
             onClick = {
                 navController.navigate(Discover)
             },
@@ -37,12 +39,15 @@ fun Navbar(modifier: Modifier = Modifier, navController: NavHostController) {
                     contentDescription = "Discover"
                 )
             },
+            colors = NavigationBarItemDefaults.colors(
+                indicatorColor = MaterialTheme.colorScheme.secondaryContainer
+            )
         )
 
         NavigationBarItem(
-            selected = destination?.equals(Map) == true,
+            selected = currentDestination.isRoute<MapPage>(),
             onClick = {
-                navController.navigate(Map(
+                navController.navigate(MapPage(
                     startingLongitude = 49.0,
                     startingLatitude = 10.0,
                     zoom = 10.0
@@ -51,13 +56,13 @@ fun Navbar(modifier: Modifier = Modifier, navController: NavHostController) {
             icon = {
                 Icon(
                     painter = painterResource(Icons.MapPin),
-                    contentDescription = "Map"
+                    contentDescription = "MapPage"
                 )
             },
         )
 
         NavigationBarItem(
-            selected = destination?.equals(Profile) == true,
+            selected = currentDestination.isRoute<Profile>(),
             onClick = {
                 navController.navigate(Profile(
                     id = "1",
@@ -72,4 +77,11 @@ fun Navbar(modifier: Modifier = Modifier, navController: NavHostController) {
             },
         )
     }
+}
+
+@Preview
+@Composable
+private fun NavbarPrev() {
+    Navbar(Modifier, rememberNavController())
+    
 }

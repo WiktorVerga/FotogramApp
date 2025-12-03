@@ -17,7 +17,7 @@ private val LightColorScheme = lightColorScheme(
     onPrimaryContainer = NeutralDark,
 
     secondary = Secondary,
-    onSecondary = NeutralLight,
+    onSecondary = NeutralDark,
     secondaryContainer = SecondaryDesaturated,
     onSecondaryContainer = NeutralDark,
 
@@ -41,15 +41,15 @@ private val LightColorScheme = lightColorScheme(
 )
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Primary,
-    onPrimary = NeutralLight,
-    primaryContainer = PrimaryDesaturated,
+    primary = PrimaryDark,
+    onPrimary = NeutralDark,
+    primaryContainer = PrimaryDesaturatedDark,
 
-    secondary = Secondary,
-    onSecondary = NeutralLight,
-    secondaryContainer = SecondaryDesaturated,
+    secondary = SecondaryDark,
+    onSecondary = NeutralDark,
+    secondaryContainer = SecondaryDesaturatedDark,
 
-    tertiary = Accent,
+    tertiary = AccentDark,
     onTertiary = NeutralDark,
     tertiaryContainer = NeutralDark,
     onTertiaryContainer = LightGray,

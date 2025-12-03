@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.example.fotogramapp.navigation.Navigator
 import com.example.fotogramapp.ui.components.navbar.Navbar
+import com.example.fotogramapp.ui.components.topbar.TopBar
 
 @Composable
 fun FotogramApp(modifier: Modifier = Modifier) {
@@ -19,10 +20,13 @@ fun FotogramApp(modifier: Modifier = Modifier) {
     Scaffold(
         modifier = modifier
         .fillMaxSize(),
+        topBar = {
+            TopBar(navController = navController)
+        },
         bottomBar = {
             Navbar(navController = navController)
         },
-        topBar = {}
+
     ) { innerPadding ->
         Box(
             Modifier

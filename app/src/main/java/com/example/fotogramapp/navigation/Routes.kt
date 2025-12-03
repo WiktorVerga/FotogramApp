@@ -17,4 +17,4 @@ object CreatePost
 data class Profile(val id: String, val isUsers: Boolean)
 
 @Serializable
-data class Map(val startingLongitude: Double, val startingLatitude: Double, val zoom: Double)
+data class MapPage(val startingLongitude: Double, val startingLatitude: Double, val zoom: Double)
