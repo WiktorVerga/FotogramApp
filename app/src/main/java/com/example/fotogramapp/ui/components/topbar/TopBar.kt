@@ -4,9 +4,12 @@ import android.util.Log
 import androidx.compose.material3.*
 import androidx.compose.material3.BottomAppBarDefaults.windowInsets
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarDefaults.enterAlwaysScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.res.painterResource
@@ -30,7 +33,6 @@ fun TopBar(modifier: Modifier = Modifier, navController: NavController) {
 
     LaunchedEffect(navBackStackEntry) {
         currentDestination = navBackStackEntry?.destination
-        Log.d("TopBar", "${currentDestination?.route}")
     }
 
     val screenTitle = when {
@@ -59,6 +61,7 @@ fun TopBar(modifier: Modifier = Modifier, navController: NavController) {
                     )
                 }
             },
+            scrollBehavior = enterAlwaysScrollBehavior(),
             windowInsets = TopAppBarDefaults.windowInsets,
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.background,
@@ -82,6 +85,7 @@ fun TopBar(modifier: Modifier = Modifier, navController: NavController) {
                     )
                 }
             },
+            scrollBehavior = enterAlwaysScrollBehavior(),
             windowInsets = TopAppBarDefaults.windowInsets,
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.background,

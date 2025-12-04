@@ -31,6 +31,7 @@ private val LightColorScheme = lightColorScheme(
 
     surface = LightGray,
     onSurface = NeutralDark,
+    surfaceContainer = White,
 
     error = Danger,
     onError = NeutralLight,
@@ -42,15 +43,15 @@ private val LightColorScheme = lightColorScheme(
 
 private val DarkColorScheme = darkColorScheme(
     primary = PrimaryDark,
-    onPrimary = NeutralDark,
+    onPrimary = NeutralLight,
     primaryContainer = PrimaryDesaturatedDark,
 
     secondary = SecondaryDark,
-    onSecondary = NeutralDark,
+    onSecondary = NeutralLight,
     secondaryContainer = SecondaryDesaturatedDark,
 
     tertiary = AccentDark,
-    onTertiary = NeutralDark,
+    onTertiary = NeutralLight,
     tertiaryContainer = NeutralDark,
     onTertiaryContainer = LightGray,
 
@@ -59,10 +60,11 @@ private val DarkColorScheme = darkColorScheme(
 
     surface = NeutralDark,
     onSurface = NeutralLight,
+    surfaceContainer = Black,
 
-    error = Danger,
+    error = DangerDark,
     onError = NeutralLight,
-    errorContainer = DangerContainer,
+    errorContainer = DangerContainerDark,
     onErrorContainer = NeutralDark,
 
     outline = LightGray,

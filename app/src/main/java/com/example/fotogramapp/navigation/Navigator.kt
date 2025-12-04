@@ -7,16 +7,17 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.fotogramapp.features.signup.SignupPage
 
 @Composable
 fun Navigator(modifier: Modifier = Modifier, navController: NavHostController) {
 
     NavHost(
         navController = navController,
-        startDestination = Discover,
+        startDestination = SignUp,
     ) {
         composable<SignUp> {
-            //TODO: Signup Page
+            SignupPage()
         }
         composable<Discover> {
             //TODO: Discover Page

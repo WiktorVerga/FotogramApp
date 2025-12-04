@@ -27,26 +27,26 @@ val Typography = Typography(
     headlineLarge = TextStyle(
         fontFamily = Inter,
         fontWeight = FontWeight.ExtraBold,
-        fontSize = 35.sp
+        fontSize = 40.sp
     ),
 
     headlineMedium = TextStyle(
         fontFamily = Inter,
         fontWeight = FontWeight.Bold,
-        fontSize = 24.sp
+        fontSize = 30.sp
     ),
 
     headlineSmall = TextStyle(
         fontFamily = Inter,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 20.sp
+        fontSize = 25.sp
     ),
 
     // Body (Nunito)
     bodyLarge = TextStyle(
         fontFamily = Nunito,
         fontWeight = FontWeight.Normal,
-        fontSize = 20.sp
+        fontSize = 25.sp
     ),
 
     bodyMedium = TextStyle(
@@ -56,8 +56,14 @@ val Typography = Typography(
     ),
 
     labelLarge = TextStyle(
-        fontFamily = Inter,
+        fontFamily = Nunito,
         fontWeight = FontWeight.Light,
-        fontSize = 16.sp
+        fontSize = 20.sp
+    ),
+
+    labelSmall = TextStyle(
+        fontFamily = Nunito,
+        fontWeight = FontWeight.ExtraLight,
+        fontSize = 15.sp
     )
 )
