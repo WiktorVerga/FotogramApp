@@ -10,4 +10,5 @@ object Icons {
     @DrawableRes val Profile = R.drawable.ic_profile
     @DrawableRes val Back = R.drawable.ic_back
     @DrawableRes val Add = R.drawable.ic_add
+    @DrawableRes val SuggestedUser = R.drawable.ic_suggested_user
 }

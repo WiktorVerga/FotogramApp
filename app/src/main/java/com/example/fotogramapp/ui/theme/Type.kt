@@ -50,7 +50,7 @@ val Typography = Typography(
     ),
 
     bodyMedium = TextStyle(
-        fontFamily = Nunito,
+        fontFamily = Inter,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp
     ),

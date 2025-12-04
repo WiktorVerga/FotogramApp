@@ -7,6 +7,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.fotogramapp.features.discover.DiscoverPage
+import com.example.fotogramapp.features.profile.ProfilePage
 import com.example.fotogramapp.features.signup.SignupPage
 
 @Composable
@@ -21,11 +23,11 @@ fun Navigator(modifier: Modifier = Modifier, navController: NavHostController) {
         }
         composable<Discover> {
             //TODO: Discover Page
-            Text("Discover")
+            DiscoverPage()
         }
         composable<Profile> {
             //TODO: Profile Page
-            Text("Profile")
+            ProfilePage()
         }
         composable<CreatePost> {
             //TODO: Create Post Page
