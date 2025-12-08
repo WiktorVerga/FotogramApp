@@ -1,4 +1,4 @@
-package com.example.fotogramapp.ui.components.post
+package com.example.fotogramapp.ui.components.post.postcard
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -12,29 +12,29 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.fotogramapp.domain.model.Post
 import com.example.fotogramapp.ui.theme.FotogramTheme
 import com.example.fotogramapp.ui.theme.Icons
 
 @Composable
-fun PostCard(modifier: Modifier = Modifier) {
-    var isSuggested by remember { mutableStateOf(true) }
-    var hasLocation by remember { mutableStateOf(true) }
+fun PostCard(modifier: Modifier = Modifier, key: String? = null, post: Post) {
+    val viewModel: PostCardViewModel = viewModel(key = key)
 
+    LaunchedEffect(Unit) {
+        viewModel.loadPostData(post)
+    }
 
     Card(
         modifier = modifier
@@ -73,16 +73,17 @@ fun PostCard(modifier: Modifier = Modifier) {
                     }
                     Column() {
                         Text(
-                            "CreatorUsername", style = MaterialTheme.typography.headlineSmall,
+                            text = viewModel.creatorUsername,
+                            style = MaterialTheme.typography.headlineSmall,
                             fontSize = 20.sp
                         )
                         Text(
-                            if (isSuggested) "Suggested" else "You Follow",
+                            if (viewModel.isSuggested) "Suggested" else "You Follow",
                             style = MaterialTheme.typography.labelSmall
                         )
                     }
                 }
-                if (isSuggested) {
+                if (viewModel.isSuggested) {
                     Icon(
                         modifier = Modifier
                             .size(45.dp),
@@ -110,11 +111,11 @@ fun PostCard(modifier: Modifier = Modifier) {
             ) {
                 Text(
                     modifier = Modifier
-                        .fillMaxWidth(if (hasLocation) 4 / 5f else 1f),
+                        .fillMaxWidth(if (viewModel.hasLocation) 4 / 5f else 1f),
                     text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.",
                     style = MaterialTheme.typography.bodyMedium,
                 )
-                if (hasLocation) {
+                if (viewModel.hasLocation) {
                     Icon(
                         modifier = Modifier
                             .size(50.dp),
@@ -132,7 +133,7 @@ fun PostCard(modifier: Modifier = Modifier) {
 @Composable
 private fun PostCardPrev() {
     FotogramTheme() {
-        PostCard()
+        PostCard(post = Post(1, 1, "Hello World!", "dousahyudhas", null))
     }
 
 }
