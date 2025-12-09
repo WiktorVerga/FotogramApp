@@ -1,17 +1,12 @@
 package com.example.fotogramapp.ui.components.topbar
 
-import android.util.Log
 import androidx.compose.material3.*
-import androidx.compose.material3.BottomAppBarDefaults.windowInsets
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarDefaults.enterAlwaysScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
@@ -23,7 +18,7 @@ import com.example.fotogramapp.navigation.MapPage
 import com.example.fotogramapp.navigation.Profile
 import com.example.fotogramapp.navigation.SignUp
 import com.example.fotogramapp.navigation.isRoute
-import com.example.fotogramapp.ui.theme.Icons
+import com.example.fotogramapp.ui.theme.CustomIcons
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,7 +51,7 @@ fun TopBar(modifier: Modifier = Modifier, navController: NavController) {
                     }
                 ) {
                     Icon(
-                        painter = painterResource(Icons.Add),
+                        painter = painterResource(CustomIcons.Add),
                         contentDescription = "Create new Post",
                     )
                 }
@@ -80,7 +75,7 @@ fun TopBar(modifier: Modifier = Modifier, navController: NavController) {
                     }
                 ) {
                     Icon(
-                        painter = painterResource(Icons.Back),
+                        painter = painterResource(CustomIcons.Back),
                         contentDescription = "go back",
                     )
                 }

@@ -22,12 +22,12 @@ fun Navigator(modifier: Modifier = Modifier, navController: NavHostController) {
             SignupPage()
         }
         composable<Discover> {
-            //TODO: Discover Page
-            DiscoverPage()
+            DiscoverPage(navController = navController)
         }
         composable<Profile> {
+            val args = it.toRoute<Profile>()
             //TODO: Profile Page
-            ProfilePage()
+            ProfilePage(navController = navController, userId = args.id)
         }
         composable<CreatePost> {
             //TODO: Create Post Page

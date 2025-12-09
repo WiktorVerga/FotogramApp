@@ -21,19 +21,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.fotogramapp.domain.model.Post
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.fotogramapp.features.profile.components.BentoInformation
 import com.example.fotogramapp.ui.components.buttons.PrimaryButton
+import com.example.fotogramapp.ui.components.images.profilepicture.ProfilePicture
 import com.example.fotogramapp.ui.components.post.postcard.PostCard
 import com.example.fotogramapp.ui.theme.FotogramTheme
 
 @Composable
-fun ProfilePage(modifier: Modifier = Modifier) {
+fun ProfilePage(modifier: Modifier = Modifier, navController: NavHostController, userId: Int) {
 
     val viewModel: ProfileViewModel = viewModel()
 
     LaunchedEffect(Unit) {
-        viewModel.loadUserData(1)
+
+        viewModel.loadUserData(userId)
     }
 
     LazyColumn (
@@ -62,7 +65,7 @@ fun ProfilePage(modifier: Modifier = Modifier) {
                         .background(MaterialTheme.colorScheme.tertiaryContainer, CircleShape)
 
                 ) {
-                    //TODO: Profile Image
+                    ProfilePicture(image64 = viewModel.profilePicture)
                 }
                 Column() {
                     Text(
@@ -78,7 +81,12 @@ fun ProfilePage(modifier: Modifier = Modifier) {
             // == Bento Information ==
             BentoInformation(
                 modifier = Modifier
-                    .padding(vertical = 20.dp)
+                    .padding(vertical = 20.dp),
+                biograpy = viewModel.biography,
+                followers = viewModel.followersCount,
+                following = viewModel.followingCount,
+                dob = viewModel.dob,
+                postCounter = viewModel.postCount,
             )
 
             // == Follow / Edit Button ==
@@ -86,7 +94,7 @@ fun ProfilePage(modifier: Modifier = Modifier) {
                 //TODO: aggiungi azione bottone e condizione per currentUser
             })
 
-            // == Posts ==
+            // == Posts Title ==
             Text("Posts",
                 modifier = Modifier
                     .padding(top = 50.dp, bottom = 20.dp)
@@ -95,8 +103,15 @@ fun ProfilePage(modifier: Modifier = Modifier) {
             )
         }
 
+
+        // == Posts ==
         itemsIndexed(viewModel.posts) { index, post ->
-            PostCard(key = index.toString(), post = post)
+            PostCard(key = index.toString(), post = post, navController = navController)
+        }
+
+        // == End Spacer ==
+        item {
+            Box(modifier = Modifier.size(50.dp))
         }
     }
 }
@@ -105,6 +120,6 @@ fun ProfilePage(modifier: Modifier = Modifier) {
 @Composable
 private fun ProfilePagePrev() {
     FotogramTheme() {
-        ProfilePage()
+        ProfilePage(navController = rememberNavController(), userId = 1)
     }
 }

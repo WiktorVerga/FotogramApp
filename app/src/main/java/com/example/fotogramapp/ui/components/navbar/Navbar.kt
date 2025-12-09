@@ -13,7 +13,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.fotogramapp.navigation.*
-import com.example.fotogramapp.ui.theme.Icons
+import com.example.fotogramapp.ui.theme.CustomIcons
 
 @Composable
 fun Navbar(modifier: Modifier = Modifier, navController: NavHostController) {
@@ -35,7 +35,7 @@ fun Navbar(modifier: Modifier = Modifier, navController: NavHostController) {
             },
             icon = {
                 Icon(
-                    painter = painterResource(Icons.Discover),
+                    painter = painterResource(CustomIcons.Discover),
                     contentDescription = "Discover"
                 )
             },
@@ -55,7 +55,7 @@ fun Navbar(modifier: Modifier = Modifier, navController: NavHostController) {
             },
             icon = {
                 Icon(
-                    painter = painterResource(Icons.MapPin),
+                    painter = painterResource(CustomIcons.MapPin),
                     contentDescription = "MapPage"
                 )
             },
@@ -65,13 +65,12 @@ fun Navbar(modifier: Modifier = Modifier, navController: NavHostController) {
             selected = currentDestination.isRoute<Profile>(),
             onClick = {
                 navController.navigate(Profile(
-                    id = "1",
-                    isUsers = true
+                    id = 1 //TODO: impostare id del currentUser, prendendolo da storage
                 ))
             },
             icon = {
                 Icon(
-                    painter = painterResource(Icons.Profile),
+                    painter = painterResource(CustomIcons.Profile),
                     contentDescription = "Discover"
                 )
             },

@@ -1,12 +1,15 @@
 package com.example.fotogramapp.ui.components.post.postcard
 
+import android.util.Log
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NavController
 import com.example.fotogramapp.data.repository.PostRepository
 import com.example.fotogramapp.data.repository.UserRepository
 import com.example.fotogramapp.domain.model.Post
+import com.example.fotogramapp.navigation.Profile
 
-class PostCardViewModel: ViewModel() {
+class PostCardViewModel(val navController: NavController) : ViewModel() {
     private val postRepo = PostRepository()
     private val userRepo = UserRepository()
 
@@ -15,6 +18,11 @@ class PostCardViewModel: ViewModel() {
     var creatorUsername by mutableStateOf("")
         private set
 
+    var creatorPicture by mutableStateOf("")
+        private set
+
+    private var creatorId by mutableStateOf(-1)
+        private set
     var message by mutableStateOf("")
         private set
 
@@ -30,19 +38,36 @@ class PostCardViewModel: ViewModel() {
     var isCurrentUser by mutableStateOf(false)
         private set
 
+    // == HandleFunctions ==
+
+    val handleProfileOnClick = {
+        Log.d("PostCardViewModel", "handleProfileOnClick: $creatorId")
+
+        navController.navigate(
+            Profile(
+                id = creatorId
+            )
+        )
+    }
+
+
     // == Methods ==
 
     fun loadPostData(post: Post) {
         val user = userRepo.getUser(post.authorId)
 
+        //Creator Data
+        creatorPicture = user.profilePicture
+        creatorId = user.id
         creatorUsername = user.username
+        isCurrentUser = post.authorId == user.id
+
+        //Post Data
         message = post.message
         image = post.image
-
         hasLocation = post.location != null
-
-        isCurrentUser = post.authorId == user.id
     }
+
 
 
 }

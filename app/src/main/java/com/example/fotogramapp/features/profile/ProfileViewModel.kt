@@ -17,7 +17,7 @@ class ProfileViewModel: ViewModel() {
     var biography by mutableStateOf("")
         private set
 
-    var profilePicture by mutableStateOf("")
+    var profilePicture: String by mutableStateOf("")
         private set
 
     var followersCount by mutableStateOf(0)
@@ -30,6 +30,9 @@ class ProfileViewModel: ViewModel() {
         private set
 
     var posts by mutableStateOf(listOf<Post>())
+        private set
+
+    var dob by mutableStateOf("")
         private set
 
     var isCurrentUser by mutableStateOf(true)
@@ -46,6 +49,7 @@ class ProfileViewModel: ViewModel() {
         profilePicture = user.profilePicture
         followersCount = user.followersCount
         followingCount = user.followingCount
+        dob = user.birthDate
         postCount = user.postCount
         posts = postRepo.getUserPosts(userId)
     }

@@ -1,6 +1,5 @@
 package com.example.fotogramapp.features.profile.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -12,11 +11,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun BentoInformation(modifier: Modifier = Modifier, spacing: Int = 15) {
+fun BentoInformation(modifier: Modifier = Modifier, spacing: Int = 15, biograpy: String = "Un breve testo generato per te, conciso e semplice, ideale per test o prove rapide ora. Long Biograpy", followers: Int = 0, following: Int = 0, dob: String = "", postCounter: Int = 0) {
     Column(
         modifier = modifier
             .fillMaxWidth(),
@@ -35,7 +33,7 @@ fun BentoInformation(modifier: Modifier = Modifier, spacing: Int = 15) {
                     .fillMaxHeight()
             ) {
                 Text(
-                    text = "Un breve testo generato per te, conciso e semplice, ideale per test o prove rapide ora. Long Biograpy",
+                    text = biograpy,
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Text(
@@ -54,7 +52,7 @@ fun BentoInformation(modifier: Modifier = Modifier, spacing: Int = 15) {
                     Modifier.height(75.dp)
                 ) {
                     Text(
-                        text = "12",
+                        text = followers.toString(),
                         style = MaterialTheme.typography.bodyLarge,
                     )
                     Text(
@@ -66,7 +64,7 @@ fun BentoInformation(modifier: Modifier = Modifier, spacing: Int = 15) {
                     Modifier.height(75.dp)
                 ) {
                     Text(
-                        text = "12",
+                        text = following.toString(),
                         style = MaterialTheme.typography.bodyLarge,
                     )
                     Text(
@@ -88,7 +86,7 @@ fun BentoInformation(modifier: Modifier = Modifier, spacing: Int = 15) {
                     .fillMaxWidth(3 / 5f)
             ) {
                 Text(
-                    text = "16/12/2002",
+                    text = dob,
                     style = MaterialTheme.typography.bodyLarge,
                 )
                 Text(
@@ -101,7 +99,7 @@ fun BentoInformation(modifier: Modifier = Modifier, spacing: Int = 15) {
                 Modifier.height(75.dp)
             ) {
                 Text(
-                    text = "2",
+                    text = postCounter.toString(),
                     style = MaterialTheme.typography.bodyLarge,
                 )
                 Text(
