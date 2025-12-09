@@ -38,6 +38,27 @@ class ProfileViewModel: ViewModel() {
     var isCurrentUser by mutableStateOf(true)
         private set
 
+    var isFollowing by mutableStateOf(false)
+        private set
+
+    // == Handle Functions ==
+    val handleFollowToggle = {
+        isFollowing = !isFollowing
+
+        if (isFollowing) {
+            //TODO: chiamata di rete per fare unfollow, gestita da model?
+        } else {
+            //TODO: chiamata di rete per fare follow, gestita da model?
+        }
+    }
+
+
+
+    val handleEditProfile = {
+
+    }
+
+
     // == Methods ==
 
     fun loadUserData(userId: Int) {
@@ -52,5 +73,11 @@ class ProfileViewModel: ViewModel() {
         dob = user.birthDate
         postCount = user.postCount
         posts = postRepo.getUserPosts(userId)
+
+        isCurrentUser = userId == 1 //Prendi id da DataStore
+
+        if (!isCurrentUser) {
+            isFollowing = true //Prendi da chiamata di rete /user/userId
+        }
     }
 }

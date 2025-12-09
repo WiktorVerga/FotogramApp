@@ -1,0 +1,81 @@
+package com.example.fotogramapp.features.createpost
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.navigation.NavController
+import com.example.fotogramapp.features.signup.SignupViewModel
+import com.example.fotogramapp.ui.components.buttons.PrimaryButton
+import com.example.fotogramapp.ui.components.inputs.dateinput.DateInput
+import com.example.fotogramapp.ui.components.inputs.textinput.TextInput
+
+@Composable
+fun CreatePostPage(modifier: Modifier = Modifier, navController: NavController) {
+
+    val viewModel: CreatePostViewModel = viewModel(
+        factory = viewModelFactory {
+            initializer {
+                CreatePostViewModel(navController = navController)
+            }
+        }
+    )
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+    ) {
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .imePadding(),
+            verticalArrangement = Arrangement.spacedBy(30.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+
+            ) {
+            Text("Create a New Post",
+                modifier = Modifier
+                    .padding(top = 50.dp, bottom = 20.dp)
+                    .fillMaxWidth(),
+                style = MaterialTheme.typography.headlineLarge
+            )
+
+            //TODO: Image Input
+
+            TextInput(
+                id = "message",
+                title = "Write a Message",
+                label = "Max size: 100 Characters",
+                maxSize = 100,
+                getSafeValue = viewModel.handleMessage
+            )
+
+            //TODO: Map Input
+
+            PrimaryButton(
+                modifier = modifier.padding(vertical = 50.dp),
+                text = "Publish",
+                onClick = viewModel.handlePublish
+            )
+        }
+    }
+
+}

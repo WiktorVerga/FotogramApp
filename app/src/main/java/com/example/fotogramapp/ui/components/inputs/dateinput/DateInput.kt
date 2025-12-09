@@ -27,10 +27,15 @@ import com.example.fotogramapp.ui.theme.FotogramTheme
 import com.mapbox.maps.extension.style.expressions.dsl.generated.color
 
 @Composable
-fun DateInput(modifier: Modifier = Modifier, id: String, title: String = "Title") {
+fun DateInput(modifier: Modifier = Modifier, id: String, title: String = "Title", getStringeDate: (String) -> Unit) {
 
     val dateInputVM: DateInputViewModel = viewModel(key = id)
 
+    LaunchedEffect(dateInputVM.selectedDate) {
+        if (dateInputVM.selectedDate != null) {
+            getStringeDate(dateInputVM.convertMillisToDate(dateInputVM.selectedDate ?: 0))
+        }
+    }
 
     Box(
         modifier = modifier
@@ -91,7 +96,11 @@ fun DateInput(modifier: Modifier = Modifier, id: String, title: String = "Title"
 @Composable
 private fun DateInputPrev() {
     FotogramTheme() {
-        DateInput(id = "datePreview")
+        DateInput(
+            id = "datePreview",
+            title = "",
+            getStringeDate = { },
+        )
     }
 
 }

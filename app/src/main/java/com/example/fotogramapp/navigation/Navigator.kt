@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.fotogramapp.features.createpost.CreatePostPage
 import com.example.fotogramapp.features.discover.DiscoverPage
 import com.example.fotogramapp.features.profile.ProfilePage
 import com.example.fotogramapp.features.signup.SignupPage
@@ -19,7 +20,7 @@ fun Navigator(modifier: Modifier = Modifier, navController: NavHostController) {
         startDestination = SignUp,
     ) {
         composable<SignUp> {
-            SignupPage()
+            SignupPage(navController = navController)
         }
         composable<Discover> {
             DiscoverPage(navController = navController)
@@ -30,7 +31,7 @@ fun Navigator(modifier: Modifier = Modifier, navController: NavHostController) {
             ProfilePage(navController = navController, userId = args.id)
         }
         composable<CreatePost> {
-            //TODO: Create Post Page
+            CreatePostPage(navController = navController)
         }
         composable<MapPage> {
             //TODO: MapPage Page
@@ -45,10 +46,9 @@ inline fun <reified T : Any> androidx.navigation.NavDestination?.isRoute(): Bool
 
     val baseRouteName = T::class.qualifiedName ?: return false
 
-    // 2. Prendiamo la 'route' della destinazione corrente e teniamo solo la parte prima
-    //    di eventuali parametri (che iniziano con '?' o '{').
+    //Prendo la route della destinazione corrente e tengo solo la parte prima
     val currentBaseRoute = this.route?.substringBefore('/')?.substringBefore('{')
-    Log.d("TopBar", "${currentBaseRoute}")
-    // 3. Confrontiamo le due stringhe base.
+
+    //Confronto le due stringhe base
     return currentBaseRoute.equals(baseRouteName, ignoreCase = true)
 }

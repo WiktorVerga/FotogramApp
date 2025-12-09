@@ -1,5 +1,6 @@
 package com.example.fotogramapp.features.profile
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +25,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.fotogramapp.features.profile.components.BentoInformation
+import com.example.fotogramapp.ui.components.buttons.FollowButton
 import com.example.fotogramapp.ui.components.buttons.PrimaryButton
 import com.example.fotogramapp.ui.components.images.PrimaryImage
 import com.example.fotogramapp.ui.components.post.postcard.PostCard
@@ -35,7 +37,6 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavHostController,
     val viewModel: ProfileViewModel = viewModel()
 
     LaunchedEffect(Unit) {
-
         viewModel.loadUserData(userId)
     }
 
@@ -90,9 +91,16 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavHostController,
             )
 
             // == Follow / Edit Button ==
-            PrimaryButton(text = "Edit Profile", onClick = {
-                //TODO: aggiungi azione bottone e condizione per currentUser
-            })
+            if (viewModel.isCurrentUser) {
+                PrimaryButton(text = "Edit Profile", onClick = {
+                    //TODO: aggiungi azione bottone e condizione per currentUser
+                })
+            } else {
+                FollowButton(
+                    isFollowing = viewModel.isFollowing,
+                    onClick = viewModel.handleFollowToggle,
+                )
+            }
 
             // == Posts Title ==
             Text("Posts",

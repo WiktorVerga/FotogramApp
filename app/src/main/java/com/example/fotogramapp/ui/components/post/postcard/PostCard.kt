@@ -61,7 +61,7 @@ fun PostCard(modifier: Modifier = Modifier, key: String? = null, post: Post, nav
         Column(
 
         ) {
-
+            // == User Header ==
             Row(
                 modifier = Modifier
                     .padding(top = 15.dp, start = 15.dp, end = 15.dp, bottom = 10.dp)
@@ -71,6 +71,7 @@ fun PostCard(modifier: Modifier = Modifier, key: String? = null, post: Post, nav
             ) {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .clickable(onClick = viewModel.handleProfileOnClick)
                 ) {
@@ -87,16 +88,18 @@ fun PostCard(modifier: Modifier = Modifier, key: String? = null, post: Post, nav
                     ) {
                         PrimaryImage(image64 = viewModel.creatorPicture, isPfp = true)
                     }
-                    Column() {
+                    Column {
                         Text(
                             text = viewModel.creatorUsername,
                             style = MaterialTheme.typography.headlineSmall,
                             fontSize = 20.sp
                         )
-                        Text(
-                            if (viewModel.isSuggested) "Suggested" else "You Follow",
-                            style = MaterialTheme.typography.labelSmall
-                        )
+                        if (!viewModel.isCurrentUser) {
+                            Text(
+                                if (viewModel.isSuggested) "Suggested" else "You Follow",
+                                style = MaterialTheme.typography.labelSmall
+                            )
+                        }
                     }
                 }
                 if (viewModel.isSuggested) {
@@ -110,6 +113,7 @@ fun PostCard(modifier: Modifier = Modifier, key: String? = null, post: Post, nav
                 }
             }
 
+            // == Post Image ==
             Box(
                 modifier = Modifier
                     .size(width = 330.dp, height = 330.dp)
@@ -118,6 +122,7 @@ fun PostCard(modifier: Modifier = Modifier, key: String? = null, post: Post, nav
                 PrimaryImage(image64 = viewModel.image)
             }
 
+            // == Post Message & Location ==
             Row(
                 modifier = Modifier
                     .padding(top = 10.dp, start = 15.dp, end = 15.dp, bottom = 15.dp)

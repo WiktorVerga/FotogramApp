@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
@@ -41,8 +43,7 @@ fun PrimaryImageZoom(
     modifier: Modifier = Modifier,
     show: Boolean = false,
     image: Bitmap?,
-    onDismiss: () -> Unit,
-    isPfp: Boolean,
+    onDismiss: () -> Unit
 ) {
 
     var offsetX by mutableStateOf(0f)
@@ -67,7 +68,10 @@ fun PrimaryImageZoom(
                         modifier = Modifier
                             .fillMaxSize()
                             .background(Color.Black.copy(alpha = 0.5f))
-                            .blur(20.dp),
+                            .blur(20.dp)
+                            .clickable(onClick = {
+                                onDismiss()
+                            }),
                     )
 
                     Box(
@@ -88,7 +92,8 @@ fun PrimaryImageZoom(
                                         change.consume()
                                     }
                                 }
-                            },
+                            }
+                            .fillMaxWidth(),
                         contentAlignment = Alignment.Center
                     ) {
                         if (image != null)
@@ -97,47 +102,33 @@ fun PrimaryImageZoom(
                                 contentDescription = "Fullscreen Image"
                             )
                         else {
-                            if (isPfp) {
-                                //Placeholder for Profile Picture
-                                Image(
-                                    painter = painterResource(id = R.drawable.user_placeholder),
-                                    contentDescription = "User Placeholder",
-                                    contentScale = ContentScale.Fit,
-                                    modifier = modifier
-                                        .clip(CircleShape)
-                                        .fillMaxWidth()
-
-                                )
-                            } else {
-                                //Placeholder for normal Image
-                                SubcomposeAsyncImage(
-                                    modifier = modifier
-                                        .fillMaxWidth(),
-                                    model = "https://placehold.co/330x330/png?text=NO+IMAGE",
-                                    contentDescription = "Image Placeholder",
-                                    error = {
-                                        Box(
-                                            modifier = Modifier
-                                                .fillMaxSize()
-                                                .background(MaterialTheme.colorScheme.tertiaryContainer),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            Text(
-                                                text = "Image Failed to Load",
-                                                style = MaterialTheme.typography.labelLarge
-                                            )
-                                        }
-                                    },
-                                    loading = {
-                                        Box(
-                                            modifier = Modifier
-                                                .fillMaxSize()
-                                                .shimmerEffect()
+                            //Placeholder for normal Image
+                            SubcomposeAsyncImage(
+                                modifier = modifier
+                                    .fillMaxWidth(),
+                                model = "https://placehold.co/900x1600/png?text=NO+IMAGE",
+                                contentDescription = "Image Placeholder",
+                                error = {
+                                    Box(
+                                        modifier = Modifier
+                                            .background(MaterialTheme.colorScheme.tertiaryContainer),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = "Image Failed to Load",
+                                            style = MaterialTheme.typography.labelLarge
                                         )
-                                    },
-                                    contentScale = ContentScale.Crop,
-                                )
-                            }
+                                    }
+                                },
+                                loading = {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .shimmerEffect()
+                                    )
+                                },
+                                contentScale = ContentScale.Fit,
+                            )
                         }
                     }
                 }
@@ -153,7 +144,6 @@ private fun ImageZoomPrev() {
     PrimaryImageZoom(
         image = null,
         onDismiss = {  },
-        isPfp = false
     )
 
 }

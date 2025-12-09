@@ -20,61 +20,66 @@ fun Navbar(modifier: Modifier = Modifier, navController: NavHostController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-
-    NavigationBar(
-        modifier =
-            modifier
-                .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)),
-        windowInsets = NavigationBarDefaults.windowInsets,
-        containerColor = MaterialTheme.colorScheme.secondary,
-    ) {
-        NavigationBarItem(
-            selected = currentDestination.isRoute<Discover>(),
-            onClick = {
-                navController.navigate(Discover)
-            },
-            icon = {
-                Icon(
-                    painter = painterResource(CustomIcons.Discover),
-                    contentDescription = "Discover"
+    if (!(currentDestination.isRoute<SignUp>() || currentDestination.isRoute<CreatePost>())) {
+        NavigationBar(
+            modifier =
+                modifier
+                    .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)),
+            windowInsets = NavigationBarDefaults.windowInsets,
+            containerColor = MaterialTheme.colorScheme.secondary,
+        ) {
+            NavigationBarItem(
+                selected = currentDestination.isRoute<Discover>(),
+                onClick = {
+                    navController.navigate(Discover)
+                },
+                icon = {
+                    Icon(
+                        painter = painterResource(CustomIcons.Discover),
+                        contentDescription = "Discover"
+                    )
+                },
+                colors = NavigationBarItemDefaults.colors(
+                    indicatorColor = MaterialTheme.colorScheme.secondaryContainer
                 )
-            },
-            colors = NavigationBarItemDefaults.colors(
-                indicatorColor = MaterialTheme.colorScheme.secondaryContainer
             )
-        )
 
-        NavigationBarItem(
-            selected = currentDestination.isRoute<MapPage>(),
-            onClick = {
-                navController.navigate(MapPage(
-                    startingLongitude = 49.0,
-                    startingLatitude = 10.0,
-                    zoom = 10.0
-                ))
-            },
-            icon = {
-                Icon(
-                    painter = painterResource(CustomIcons.MapPin),
-                    contentDescription = "MapPage"
-                )
-            },
-        )
+            NavigationBarItem(
+                selected = currentDestination.isRoute<MapPage>(),
+                onClick = {
+                    navController.navigate(
+                        MapPage(
+                            startingLongitude = 49.0,
+                            startingLatitude = 10.0,
+                            zoom = 10.0
+                        )
+                    )
+                },
+                icon = {
+                    Icon(
+                        painter = painterResource(CustomIcons.MapPin),
+                        contentDescription = "MapPage"
+                    )
+                },
+            )
 
-        NavigationBarItem(
-            selected = currentDestination.isRoute<Profile>(),
-            onClick = {
-                navController.navigate(Profile(
-                    id = 1 //TODO: impostare id del currentUser, prendendolo da storage
-                ))
-            },
-            icon = {
-                Icon(
-                    painter = painterResource(CustomIcons.Profile),
-                    contentDescription = "Discover"
-                )
-            },
-        )
+            NavigationBarItem(
+                selected = currentDestination.isRoute<Profile>(),
+                onClick = {
+                    navController.navigate(
+                        Profile(
+                            id = 1 //TODO: impostare id del currentUser, prendendolo da storage
+                        )
+                    )
+                },
+                icon = {
+                    Icon(
+                        painter = painterResource(CustomIcons.Profile),
+                        contentDescription = "Discover"
+                    )
+                },
+            )
+        }
     }
 }
 

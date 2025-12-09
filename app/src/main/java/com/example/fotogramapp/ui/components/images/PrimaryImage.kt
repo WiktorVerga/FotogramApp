@@ -36,7 +36,7 @@ fun PrimaryImage(modifier: Modifier = Modifier, image64: String = "", isPfp: Boo
 
     Box(
         modifier = modifier
-            .clickable(onClick = {
+            .clickable(enabled = !isPfp, onClick = {
                 showZoomImage = true
             })
     ) {
@@ -62,7 +62,7 @@ fun PrimaryImage(modifier: Modifier = Modifier, image64: String = "", isPfp: Boo
                 SubcomposeAsyncImage(
                     modifier = modifier
                         .fillMaxSize(),
-                    model = "https://placehold.co/330x330/png?text=NO+IMAGE",
+                    model = "https://placehold.co/900x1600/png?text=NO+IMAGE",
                     contentDescription = "Image Placeholder",
                     error = {
                         Box(
@@ -94,8 +94,7 @@ fun PrimaryImage(modifier: Modifier = Modifier, image64: String = "", isPfp: Boo
             image = imageBitmap,
             onDismiss = {
                 showZoomImage = false
-            },
-            isPfp = isPfp
+            }
         )
     }
 }
