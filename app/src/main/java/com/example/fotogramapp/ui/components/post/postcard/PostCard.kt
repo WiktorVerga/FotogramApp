@@ -31,7 +31,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.fotogramapp.domain.model.Post
 import com.example.fotogramapp.ui.components.images.PrimaryImage
-import com.example.fotogramapp.ui.components.images.profilepicture.ProfilePicture
+
 import com.example.fotogramapp.ui.theme.FotogramTheme
 import com.example.fotogramapp.ui.theme.CustomIcons
 
@@ -85,7 +85,7 @@ fun PostCard(modifier: Modifier = Modifier, key: String? = null, post: Post, nav
                             .background(MaterialTheme.colorScheme.tertiaryContainer, CircleShape)
 
                     ) {
-                        ProfilePicture(image64 = viewModel.creatorPicture)
+                        PrimaryImage(image64 = viewModel.creatorPicture, isPfp = true)
                     }
                     Column() {
                         Text(

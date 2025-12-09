@@ -25,7 +25,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.fotogramapp.features.profile.components.BentoInformation
 import com.example.fotogramapp.ui.components.buttons.PrimaryButton
-import com.example.fotogramapp.ui.components.images.profilepicture.ProfilePicture
+import com.example.fotogramapp.ui.components.images.PrimaryImage
 import com.example.fotogramapp.ui.components.post.postcard.PostCard
 import com.example.fotogramapp.ui.theme.FotogramTheme
 
@@ -65,7 +65,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavHostController,
                         .background(MaterialTheme.colorScheme.tertiaryContainer, CircleShape)
 
                 ) {
-                    ProfilePicture(image64 = viewModel.profilePicture)
+                    PrimaryImage(image64 = viewModel.profilePicture, isPfp = true)
                 }
                 Column() {
                     Text(
