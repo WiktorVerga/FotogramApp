@@ -12,7 +12,6 @@ class DiscoverViewModel: ViewModel() {
     private val startPagination: Int = 1
     private val endPagination: Int = 4
 
-
     var posts by mutableStateOf(listOf<Post>())
         private set
 
