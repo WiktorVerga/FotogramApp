@@ -42,7 +42,9 @@ class MainActivity : ComponentActivity() {
                     application,
                     AppDatabase::class.java,
                     "fotogram-database"
-                ).build()
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
             }
 
             CompositionLocalProvider(
@@ -50,7 +52,7 @@ class MainActivity : ComponentActivity() {
                 LocalDataStore provides settingsRepository
 
             ) {
-                FotogramTheme(false) {
+                FotogramTheme() {
                     FotogramApp()
                 }
             }

@@ -10,6 +10,8 @@ class User(
     val biography: String,
     val birthDate: String,
     val profilePicture: String?,
+    var isYourFollower: Boolean,
+    var isYourFollowing: Boolean,
     val followersCount: Int,
     val followingCount: Int,
     val postCount: Int,

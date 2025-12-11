@@ -28,6 +28,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.fotogramapp.LocalAppDatabase
+import com.example.fotogramapp.LocalDataStore
 import com.example.fotogramapp.domain.model.Post
 import com.example.fotogramapp.navigation.LocalNavController
 import com.example.fotogramapp.ui.components.images.PrimaryImage
@@ -35,15 +36,16 @@ import com.example.fotogramapp.ui.components.post.PostCardViewModel
 import com.example.fotogramapp.ui.theme.CustomIcons
 
 @Composable
-fun PostCard(modifier: Modifier = Modifier.Companion, key: String? = null, post: Post) {
+fun PostCard(modifier: Modifier = Modifier, key: String? = null, post: Post) {
     val navController = LocalNavController.current
     val db = LocalAppDatabase.current
+    val settingsRepository = LocalDataStore.current
 
     val viewModel: PostCardViewModel = viewModel(
         key = key,
         factory = viewModelFactory {
             initializer {
-                PostCardViewModel(navController, db)
+                PostCardViewModel(navController, db, settingsRepository)
             }
         }
     )
@@ -65,20 +67,20 @@ fun PostCard(modifier: Modifier = Modifier.Companion, key: String? = null, post:
         ) {
             // == User Header ==
             Row(
-                modifier = Modifier.Companion
+                modifier = Modifier
                     .padding(top = 15.dp, start = 15.dp, end = 15.dp, bottom = 10.dp)
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Companion.CenterVertically
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    verticalAlignment = Alignment.Companion.CenterVertically,
-                    modifier = Modifier.Companion
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
                         .clickable(onClick = viewModel.handleProfileOnClick)
                 ) {
                     Box(
-                        modifier = Modifier.Companion
+                        modifier = Modifier
                             .size(width = 45.dp, height = 45.dp)
                             .border(
                                 width = 1.dp,
@@ -106,7 +108,7 @@ fun PostCard(modifier: Modifier = Modifier.Companion, key: String? = null, post:
                 }
                 if (viewModel.isSuggested) {
                     Icon(
-                        modifier = Modifier.Companion
+                        modifier = Modifier
                             .size(45.dp),
                         painter = painterResource(CustomIcons.SuggestedUser),
                         contentDescription = "Suggested User Icon",
@@ -117,7 +119,7 @@ fun PostCard(modifier: Modifier = Modifier.Companion, key: String? = null, post:
 
             // == Post Image ==
             Box(
-                modifier = Modifier.Companion
+                modifier = Modifier
                     .size(width = 330.dp, height = 330.dp)
                     .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
             ) {
@@ -126,21 +128,21 @@ fun PostCard(modifier: Modifier = Modifier.Companion, key: String? = null, post:
 
             // == Post Message & Location ==
             Row(
-                modifier = Modifier.Companion
+                modifier = Modifier
                     .padding(top = 10.dp, start = 15.dp, end = 15.dp, bottom = 15.dp)
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Companion.CenterVertically
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    modifier = Modifier.Companion
+                    modifier = Modifier
                         .fillMaxWidth(if (viewModel.hasLocation) 4 / 5f else 1f),
                     text = viewModel.message,
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 if (viewModel.hasLocation) {
                     Icon(
-                        modifier = Modifier.Companion
+                        modifier = Modifier
                             .size(50.dp),
                         painter = painterResource(CustomIcons.MapPin),
                         contentDescription = "Map Location Icon",

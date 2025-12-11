@@ -1,9 +1,14 @@
 package com.example.fotogramapp.data.repository
 
+import com.example.fotogramapp.data.database.AppDatabase
 import com.example.fotogramapp.domain.model.Post
 import com.mapbox.geojson.Point
 
-class PostRepository {
+class PostRepository(private val database: AppDatabase, private val settingsRepository: SettingsRepository) {
+    val postDao = database.postDao()
+    val userRepo = UserRepository(database, settingsRepository)
+
+
     private val allPosts = listOf<Post>(
         Post(
             id = 1,
@@ -34,27 +39,61 @@ class PostRepository {
             location = null
         )
     )
-    fun getPost(id: Int): Post {
-        return allPosts.first { it.id == id }
+
+    // == Get Posts ==
+    suspend fun getPost(id: Int): Post? {
+        val cachedPost = postDao.getPostById(id)
+
+        if (cachedPost != null) {
+            return cachedPost
+        } else {
+            //TODO: chiamata di rete per prendere il post
+            val remotePost = allPosts.find { it.id == id }
+
+            if (remotePost != null) {
+                //Riaggiorno la Cache
+                cachePost(remotePost)
+
+                return remotePost
+            }
+
+            return null
+        }
     }
 
-    fun getPosts(ids: List<Int>): List<Post> {
+    suspend fun getPosts(ids: List<Int>): List<Post> {
         val posts = ids.map {
             getPost(it)
         }
 
-        return posts
+        //Se non trovo qualche post lo elimino dalla lista
+        return posts.filterNotNull()
     }
 
-    fun getPosts(ids: IntRange): List<Post> {
+    suspend fun getPosts(ids: IntRange): List<Post> {
         val posts = ids.map {
             getPost(it)
         }
 
-        return posts
+        return posts.filterNotNull()
     }
 
-    fun getUserPosts(userId: Int): List<Post> {
-        return allPosts.filter { it.authorId == userId }
+
+    suspend fun cachePost(post: Post) {
+        postDao.clear(post.id)
+        postDao.insertPost(post)
     }
+
+    suspend fun getUserPosts(userId: Int): List<Post> {
+        //TODO: fai chiamata di rete per prendere gli id dei post dell'utente
+        // risultato della chiamata di rete: lista di id
+        val remotePosts = userRepo.getUser(userId)?.postIds //Momentaneamente simula la chiamata
+
+        if (remotePosts == null) {
+            return listOf()
+        }
+
+        return getPosts(remotePosts)
+    }
+
 }

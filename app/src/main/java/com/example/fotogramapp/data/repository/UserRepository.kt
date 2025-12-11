@@ -1,9 +1,13 @@
 package com.example.fotogramapp.data.repository
 
+import android.util.Log
 import com.example.fotogramapp.data.database.AppDatabase
 import com.example.fotogramapp.domain.model.User
 
-class UserRepository(private val database: AppDatabase) {
+class UserRepository(
+    private val database: AppDatabase,
+    private val settingsRepository: SettingsRepository
+) {
 
     val userDao = database.userDao()
 
@@ -21,7 +25,9 @@ class UserRepository(private val database: AppDatabase) {
             followersCount = 10,
             followingCount = 3,
             postCount = 2,
-            postIds = listOf(1, 2, 3)
+            postIds = listOf(1, 2, 3),
+            isYourFollower = false,
+            isYourFollowing = false
         ),
         User(
             id = 2,
@@ -32,7 +38,9 @@ class UserRepository(private val database: AppDatabase) {
             followersCount = 1,
             followingCount = 10,
             postCount = 1,
-            postIds = listOf(4)
+            postIds = listOf(4),
+            isYourFollower = false,
+            isYourFollowing = true
         )
     )
 
@@ -42,6 +50,7 @@ class UserRepository(private val database: AppDatabase) {
         val now = System.currentTimeMillis()
 
         if (cachedUser != null && (now - cachedUser.lastUpdated) < CACHE_TIMEOUT) {
+            Log.d("ProfileViewModel", "Returning cached user")
             return cachedUser
         } else {
             //TODO: prendi dalla rete
@@ -63,5 +72,30 @@ class UserRepository(private val database: AppDatabase) {
     suspend fun cacheUser(user: User) {
         userDao.clear(user.id)
         userDao.insertUser(user)
+    }
+
+    suspend fun isLoggedUser(userId: Int) = userId == settingsRepository.getLoggedUserId()
+
+    // == Update User ==
+    suspend fun followUser(userId: Int) {
+        //TODO: chiamata per fare il follow
+
+        val user = getUser(userId)
+        if (user != null) {
+            user.isYourFollowing = true
+            cacheUser(user)
+
+        }
+    }
+
+    suspend fun unFollowUser(userId: Int) {
+        //TODO: chiamata per fare il unfollow
+
+        val user = getUser(userId)
+        if (user != null) {
+            user.isYourFollowing = false
+            cacheUser(user)
+
+        }
     }
 }

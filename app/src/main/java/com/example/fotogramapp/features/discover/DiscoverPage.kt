@@ -22,10 +22,10 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.fotogramapp.LocalAppDatabase
+import com.example.fotogramapp.LocalDataStore
 import com.example.fotogramapp.data.database.AppDatabase
 import com.example.fotogramapp.navigation.CreatePost
 import com.example.fotogramapp.navigation.LocalNavController
-import com.example.fotogramapp.ui.components.post.PostList
 import com.example.fotogramapp.ui.components.post.PostCard
 import com.example.fotogramapp.ui.components.title.LargeHeadline
 import com.example.fotogramapp.ui.theme.FotogramTheme
@@ -34,11 +34,12 @@ import com.example.fotogramapp.ui.theme.FotogramTheme
 fun DiscoverPage(modifier: Modifier = Modifier) {
     val navController = LocalNavController.current
     val db = LocalAppDatabase.current
+    val settingsRepository = LocalDataStore.current
 
     val viewModel: DiscoverViewModel = viewModel(
         factory = viewModelFactory {
             initializer {
-                DiscoverViewModel(database = db)
+                DiscoverViewModel(database = db, settingsRepository = settingsRepository)
             }
         }
     )

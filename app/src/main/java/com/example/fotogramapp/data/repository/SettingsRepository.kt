@@ -20,7 +20,7 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
         return prefs[LOGGED_USER_ID] == null
     }
 
-    suspend fun getLoggedUser(): Int? {
+    suspend fun getLoggedUserId(): Int? {
         val prefs = dataStore.data.first()
         return prefs[LOGGED_USER_ID]
     }

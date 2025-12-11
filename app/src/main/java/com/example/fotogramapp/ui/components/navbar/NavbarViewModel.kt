@@ -18,7 +18,7 @@ class NavbarViewModel(
 
     fun loadUserId() {
         viewModelScope.launch {
-            loggedUserId = settingsRepository.getLoggedUser()
+            loggedUserId = settingsRepository.getLoggedUserId()
         }
     }
 

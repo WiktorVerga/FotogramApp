@@ -6,14 +6,19 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.fotogramapp.data.database.AppDatabase
 import com.example.fotogramapp.data.repository.PostRepository
+import com.example.fotogramapp.data.repository.SettingsRepository
 import com.example.fotogramapp.data.repository.UserRepository
 import com.example.fotogramapp.domain.model.Post
 import com.example.fotogramapp.navigation.Profile
 import kotlinx.coroutines.launch
 
-class PostCardViewModel(val navController: NavController, private val database: AppDatabase) : ViewModel() {
-    private val postRepo = PostRepository()
-    private val userRepo = UserRepository(database)
+class PostCardViewModel(
+    val navController: NavController,
+    private val database: AppDatabase,
+    private val settingsRepository: SettingsRepository
+) : ViewModel() {
+    private val postRepo = PostRepository(database, settingsRepository)
+    private val userRepo = UserRepository(database, settingsRepository)
 
     // == Post Data ==
     var creatorUsername by mutableStateOf("")

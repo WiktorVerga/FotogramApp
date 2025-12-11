@@ -1,5 +1,6 @@
 package com.example.fotogramapp.features.profile
 
+import android.util.Log
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,10 +15,11 @@ class ProfileViewModel(
     private val settingsRepository: SettingsRepository,
     private val database: AppDatabase
 ) : ViewModel() {
-    private val userRepo = UserRepository(database)
-    private val postRepo = PostRepository()
+    private val userRepo = UserRepository(database, settingsRepository)
+    private val postRepo = PostRepository(database, settingsRepository)
 
     // == User Data ==
+    var id by mutableStateOf<Int?>(null)
     var username by mutableStateOf("")
         private set
 
@@ -50,13 +52,31 @@ class ProfileViewModel(
 
     // == Handle Functions ==
     val handleFollowToggle = {
-        isFollowing = !isFollowing
+
 
         if (isFollowing) {
             //TODO: chiamata di rete per fare unfollow, gestita da model?
+            Log.d("ProfileViewModel", "Sto togliendo il Follow")
+            viewModelScope.launch {
+                id?.let {
+                    userRepo.unFollowUser(it)
+                    loadUserData(it)
+                }
+
+            }
         } else {
             //TODO: chiamata di rete per fare follow, gestita da model?
+            Log.d("ProfileViewModel", "Sto mettendo il Follow")
+            viewModelScope.launch {
+                id?.let {
+                    userRepo.followUser(it)
+                    loadUserData(it)
+                }
+
+            }
         }
+
+        isFollowing = !isFollowing
     }
 
 
@@ -67,12 +87,12 @@ class ProfileViewModel(
 
 
     // == Methods ==
-
     fun loadUserData(userId: Int) {
         viewModelScope.launch {
             val user = userRepo.getUser(userId)
 
             if (user != null) {
+                id = user.id
                 username = user.username
                 biography = user.biography
                 profilePicture = user.profilePicture
@@ -82,10 +102,12 @@ class ProfileViewModel(
                 postCount = user.postCount
                 posts = postRepo.getUserPosts(userId)
 
-                isCurrentUser = userId == 1 //Prendi id da DataStore
+                isCurrentUser = userRepo.isLoggedUser(userId)
+                Log.d("ProfileViewModel", "isCurrentUser: $isCurrentUser")
 
                 if (!isCurrentUser) {
-                    isFollowing = true //Prendi da chiamata di rete /user/userId
+                    Log.d("ProfileViewModel", "isFollowing: ${user.isYourFollowing}")
+                    isFollowing = user.isYourFollowing
                 }
             }
         }
