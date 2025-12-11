@@ -18,7 +18,7 @@ import com.mapbox.geojson.Point
     indices = [Index(value = ["authorId"])]
 )
 class Post(
-    @PrimaryKey(autoGenerate = true) val id: Int,
+    @PrimaryKey val id: Int,
     val authorId: Int,
     val message: String,
     val image: String,

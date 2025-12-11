@@ -29,19 +29,7 @@ class UserRepository(
             isYourFollower = false,
             isYourFollowing = false
         ),
-        User(
-            id = 2,
-            username = "Second User",
-            biography = "This another longer biography",
-            birthDate = "14/06/2008",
-            profilePicture = "",
-            followersCount = 1,
-            followingCount = 10,
-            postCount = 1,
-            postIds = listOf(4),
-            isYourFollower = false,
-            isYourFollowing = true
-        )
+
     )
 
     suspend fun getUser(id: Int): User? {
@@ -75,6 +63,8 @@ class UserRepository(
     }
 
     suspend fun isLoggedUser(userId: Int) = userId == settingsRepository.getLoggedUserId()
+
+    suspend fun getLoggedUser() = settingsRepository.getLoggedUserId()?.let { getUser(it) }
 
     // == Update User ==
     suspend fun followUser(userId: Int) {

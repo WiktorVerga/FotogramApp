@@ -66,7 +66,7 @@ fun Navigator(
 
             }
             composable<CreatePost> {
-                CreatePostPage(navController = navController)
+                CreatePostPage()
             }
             composable<MapPage> {
                 //TODO: MapPage Page

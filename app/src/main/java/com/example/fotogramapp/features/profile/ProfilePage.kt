@@ -1,5 +1,6 @@
 package com.example.fotogramapp.features.profile
 
+import android.graphics.Bitmap
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -29,7 +30,11 @@ import androidx.navigation.compose.rememberNavController
 import com.example.fotogramapp.LocalAppDatabase
 import com.example.fotogramapp.LocalDataStore
 import com.example.fotogramapp.data.database.AppDatabase
+import com.example.fotogramapp.data.repository.PostRepository
 import com.example.fotogramapp.data.repository.SettingsRepository
+import com.example.fotogramapp.data.repository.UserRepository
+import com.example.fotogramapp.domain.model.Post
+import com.example.fotogramapp.domain.model.User
 import com.example.fotogramapp.features.profile.components.BentoInformation
 import com.example.fotogramapp.ui.components.buttons.FollowButton
 import com.example.fotogramapp.ui.components.buttons.PrimaryButton
@@ -37,6 +42,9 @@ import com.example.fotogramapp.ui.components.images.PrimaryImage
 import com.example.fotogramapp.ui.components.post.PostCard
 import com.example.fotogramapp.ui.components.title.LargeHeadline
 import com.example.fotogramapp.ui.theme.FotogramTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun ProfilePage(modifier: Modifier = Modifier, navController: NavHostController, userId: Int) {

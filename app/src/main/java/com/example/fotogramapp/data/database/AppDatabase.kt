@@ -7,7 +7,7 @@ import androidx.room.TypeConverters
 import com.example.fotogramapp.domain.model.Post
 import com.example.fotogramapp.domain.model.User
 
-@Database(entities = [User::class, Post::class], version = 2)
+@Database(entities = [User::class, Post::class], version = 3)
 @TypeConverters(Converters::class)
 abstract class AppDatabase: RoomDatabase() {
 

@@ -1,5 +1,6 @@
 package com.example.fotogramapp.ui.components.navbar
 
+import android.util.Log
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.material3.NavigationBarDefaults
@@ -37,6 +38,7 @@ fun Navbar(modifier: Modifier = Modifier, navController: NavHostController) {
     //Load userId from DataStore
     LaunchedEffect(Unit) {
         viewModel.loadUserId()
+        Log.d("Navbar", "LoggedUserId: ${viewModel.loggedUserId}")
     }
 
 

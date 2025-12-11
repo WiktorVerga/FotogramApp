@@ -19,4 +19,8 @@ interface PostDao {
 
     @Query("DELETE FROM Post WHERE id = :id")
     suspend fun clear(id: Int)
+
+    @Query("DELETE FROM Post")
+    suspend fun clearAll()
+
 }

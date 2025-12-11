@@ -1,6 +1,8 @@
 package com.example.fotogramapp.data.repository
 
+import android.graphics.Bitmap
 import com.example.fotogramapp.data.database.AppDatabase
+import com.example.fotogramapp.data.utils.toBase64
 import com.example.fotogramapp.domain.model.Post
 import com.mapbox.geojson.Point
 
@@ -31,13 +33,7 @@ class PostRepository(private val database: AppDatabase, private val settingsRepo
             image = "dousahyudhas",
             location = Point.fromLngLat(10.0, 49.0)
         ),
-        Post(
-            id = 4,
-            authorId = 2,
-            message = "Do you not follow me yet?",
-            image = "dousahyudhas",
-            location = null
-        )
+
     )
 
     // == Get Posts ==
@@ -59,6 +55,17 @@ class PostRepository(private val database: AppDatabase, private val settingsRepo
 
             return null
         }
+    }
+
+    suspend fun addPost(message: String, image: Bitmap?, location: String?) {
+        //TODO: richiesta di rete post
+        cachePost(Post(
+            id = 5,
+            authorId = 1,
+            message = message,
+            image = image.toBase64() ?: "",
+            location = null,
+        ))
     }
 
     suspend fun getPosts(ids: List<Int>): List<Post> {
