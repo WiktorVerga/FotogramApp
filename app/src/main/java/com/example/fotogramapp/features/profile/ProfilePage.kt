@@ -22,19 +22,34 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.fotogramapp.LocalAppDatabase
+import com.example.fotogramapp.LocalDataStore
+import com.example.fotogramapp.data.database.AppDatabase
+import com.example.fotogramapp.data.repository.SettingsRepository
 import com.example.fotogramapp.features.profile.components.BentoInformation
 import com.example.fotogramapp.ui.components.buttons.FollowButton
 import com.example.fotogramapp.ui.components.buttons.PrimaryButton
 import com.example.fotogramapp.ui.components.images.PrimaryImage
-import com.example.fotogramapp.ui.components.post.postcard.PostCard
+import com.example.fotogramapp.ui.components.post.PostCard
+import com.example.fotogramapp.ui.components.title.LargeHeadline
 import com.example.fotogramapp.ui.theme.FotogramTheme
 
 @Composable
 fun ProfilePage(modifier: Modifier = Modifier, navController: NavHostController, userId: Int) {
-
-    val viewModel: ProfileViewModel = viewModel()
+    val settingsRepository = LocalDataStore.current
+    val db = LocalAppDatabase.current
+    val viewModel: ProfileViewModel = viewModel(
+        factory =
+            viewModelFactory {
+                initializer {
+                    ProfileViewModel(settingsRepository = settingsRepository, database = db)
+                }
+            }
+    )
 
     LaunchedEffect(Unit) {
         viewModel.loadUserData(userId)
@@ -103,18 +118,13 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavHostController,
             }
 
             // == Posts Title ==
-            Text("Posts",
-                modifier = Modifier
-                    .padding(top = 50.dp, bottom = 20.dp)
-                    .fillMaxWidth(),
-                style = MaterialTheme.typography.headlineLarge
-            )
+            LargeHeadline("Posts \uD83C\uDF1F")
         }
 
 
         // == Posts ==
         itemsIndexed(viewModel.posts) { index, post ->
-            PostCard(key = index.toString(), post = post, navController = navController)
+            PostCard(key = index.toString(), post = post)
         }
 
         // == End Spacer ==
@@ -124,10 +134,3 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavHostController,
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-private fun ProfilePagePrev() {
-    FotogramTheme() {
-        ProfilePage(navController = rememberNavController(), userId = 1)
-    }
-}

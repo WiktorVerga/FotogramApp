@@ -27,6 +27,7 @@ import com.example.fotogramapp.ui.components.buttons.PrimaryButton
 import com.example.fotogramapp.ui.components.inputs.dateinput.DateInput
 import com.example.fotogramapp.ui.components.inputs.imageinput.ImageInput
 import com.example.fotogramapp.ui.components.inputs.textinput.TextInput
+import com.example.fotogramapp.ui.components.title.LargeHeadline
 
 @Composable
 fun CreatePostPage(modifier: Modifier = Modifier, navController: NavController) {
@@ -34,7 +35,7 @@ fun CreatePostPage(modifier: Modifier = Modifier, navController: NavController) 
     val viewModel: CreatePostViewModel = viewModel(
         factory = viewModelFactory {
             initializer {
-                CreatePostViewModel(navController = navController)
+                CreatePostViewModel(navController)
             }
         }
     )
@@ -52,12 +53,8 @@ fun CreatePostPage(modifier: Modifier = Modifier, navController: NavController) 
             horizontalAlignment = Alignment.CenterHorizontally,
 
             ) {
-            Text("Create a New Post",
-                modifier = Modifier
-                    .padding(top = 50.dp, bottom = 20.dp)
-                    .fillMaxWidth(),
-                style = MaterialTheme.typography.headlineLarge
-            )
+
+            LargeHeadline("Create a New Post \uD83D\uDCDD")
 
             ImageInput(
                 id = "image",

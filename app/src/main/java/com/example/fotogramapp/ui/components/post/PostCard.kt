@@ -1,4 +1,4 @@
-package com.example.fotogramapp.ui.components.post.postcard
+package com.example.fotogramapp.ui.components.post
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -17,31 +17,33 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import com.example.fotogramapp.LocalAppDatabase
 import com.example.fotogramapp.domain.model.Post
+import com.example.fotogramapp.navigation.LocalNavController
 import com.example.fotogramapp.ui.components.images.PrimaryImage
-
-import com.example.fotogramapp.ui.theme.FotogramTheme
+import com.example.fotogramapp.ui.components.post.PostCardViewModel
 import com.example.fotogramapp.ui.theme.CustomIcons
 
 @Composable
-fun PostCard(modifier: Modifier = Modifier, key: String? = null, post: Post, navController: NavController) {
+fun PostCard(modifier: Modifier = Modifier.Companion, key: String? = null, post: Post) {
+    val navController = LocalNavController.current
+    val db = LocalAppDatabase.current
+
     val viewModel: PostCardViewModel = viewModel(
         key = key,
         factory = viewModelFactory {
             initializer {
-                PostCardViewModel(navController = navController)
+                PostCardViewModel(navController, db)
             }
         }
     )
@@ -57,26 +59,26 @@ fun PostCard(modifier: Modifier = Modifier, key: String? = null, post: Post, nav
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.secondaryContainer
         )
-    )  {
+    ) {
         Column(
 
         ) {
             // == User Header ==
             Row(
-                modifier = Modifier
+                modifier = Modifier.Companion
                     .padding(top = 15.dp, start = 15.dp, end = 15.dp, bottom = 10.dp)
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.Companion.CenterVertically
             ) {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
+                    verticalAlignment = Alignment.Companion.CenterVertically,
+                    modifier = Modifier.Companion
                         .clickable(onClick = viewModel.handleProfileOnClick)
                 ) {
                     Box(
-                        modifier = Modifier
+                        modifier = Modifier.Companion
                             .size(width = 45.dp, height = 45.dp)
                             .border(
                                 width = 1.dp,
@@ -104,7 +106,7 @@ fun PostCard(modifier: Modifier = Modifier, key: String? = null, post: Post, nav
                 }
                 if (viewModel.isSuggested) {
                     Icon(
-                        modifier = Modifier
+                        modifier = Modifier.Companion
                             .size(45.dp),
                         painter = painterResource(CustomIcons.SuggestedUser),
                         contentDescription = "Suggested User Icon",
@@ -115,7 +117,7 @@ fun PostCard(modifier: Modifier = Modifier, key: String? = null, post: Post, nav
 
             // == Post Image ==
             Box(
-                modifier = Modifier
+                modifier = Modifier.Companion
                     .size(width = 330.dp, height = 330.dp)
                     .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
             ) {
@@ -124,21 +126,21 @@ fun PostCard(modifier: Modifier = Modifier, key: String? = null, post: Post, nav
 
             // == Post Message & Location ==
             Row(
-                modifier = Modifier
+                modifier = Modifier.Companion
                     .padding(top = 10.dp, start = 15.dp, end = 15.dp, bottom = 15.dp)
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.Companion.CenterVertically
             ) {
                 Text(
-                    modifier = Modifier
+                    modifier = Modifier.Companion
                         .fillMaxWidth(if (viewModel.hasLocation) 4 / 5f else 1f),
                     text = viewModel.message,
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 if (viewModel.hasLocation) {
                     Icon(
-                        modifier = Modifier
+                        modifier = Modifier.Companion
                             .size(50.dp),
                         painter = painterResource(CustomIcons.MapPin),
                         contentDescription = "Map Location Icon",
@@ -148,13 +150,4 @@ fun PostCard(modifier: Modifier = Modifier, key: String? = null, post: Post, nav
             }
         }
     }
-}
-
-@Preview
-@Composable
-private fun PostCardPrev() {
-    FotogramTheme() {
-        PostCard(post = Post(1, 1, "Hello World!", "dousahyudhas", null), navController = rememberNavController())
-    }
-
 }

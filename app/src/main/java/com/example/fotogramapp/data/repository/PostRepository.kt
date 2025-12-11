@@ -55,9 +55,6 @@ class PostRepository {
     }
 
     fun getUserPosts(userId: Int): List<Post> {
-        val userRepo = UserRepository()
-        val user = userRepo.getUser(userId)
-
-        return getPosts(user.postIds)
+        return allPosts.filter { it.authorId == userId }
     }
 }

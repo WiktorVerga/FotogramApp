@@ -27,13 +27,14 @@ import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import com.example.fotogramapp.R
 import com.example.fotogramapp.data.utils.ImageUtils
+import com.example.fotogramapp.data.utils.toBitmap
 import com.example.fotogramapp.ui.components.images.zoomoverlays.PrimaryImageZoom
 import com.example.fotogramapp.ui.theme.shimmerEffect
 
 @Composable
-fun PrimaryImage(modifier: Modifier = Modifier, image64: String = "", isPfp: Boolean = false) {
+fun PrimaryImage(modifier: Modifier = Modifier, image64: String? = "", isPfp: Boolean = false) {
 
-    val imageBitmap: Bitmap? = ImageUtils.base64ToBitmap(image64)
+    val imageBitmap: Bitmap? = image64?.toBitmap()
     PrimaryImage(modifier, imageBitmap, isPfp)
 }
 

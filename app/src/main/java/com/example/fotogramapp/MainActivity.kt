@@ -1,32 +1,59 @@
 package com.example.fotogramapp
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.datastore.preferences.preferencesDataStore
+import androidx.room.Room
 import com.example.fotogramapp.app.FotogramApp
+import com.example.fotogramapp.data.database.AppDatabase
+import com.example.fotogramapp.data.repository.SettingsRepository
 import com.example.fotogramapp.ui.theme.FotogramTheme
+
+//DataStore
+private val Context.dataStore by preferencesDataStore(name = "settings")
+val LocalAppDatabase = staticCompositionLocalOf<AppDatabase> {
+    error("LocalAppDatabase not provided")
+}
+
+val LocalDataStore = staticCompositionLocalOf<SettingsRepository> {
+    error("LocalAppDatabase not provided")
+}
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
 
+        val settingsDataStore = applicationContext.dataStore
+        val settingsRepository = SettingsRepository(settingsDataStore)
+
+
+        enableEdgeToEdge()
         setContent {
-            FotogramTheme(false) {
-                FotogramApp()
+            val db = remember {
+                Room.databaseBuilder(
+                    application,
+                    AppDatabase::class.java,
+                    "fotogram-database"
+                ).build()
+            }
+
+            CompositionLocalProvider(
+                LocalAppDatabase provides db,
+                LocalDataStore provides settingsRepository
+
+            ) {
+                FotogramTheme(false) {
+                    FotogramApp()
+                }
             }
         }
-    }
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    FotogramTheme(false) {
-        FotogramApp()
     }
 }

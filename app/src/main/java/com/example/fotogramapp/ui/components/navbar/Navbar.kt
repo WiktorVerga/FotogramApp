@@ -9,9 +9,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.fotogramapp.LocalDataStore
+import com.example.fotogramapp.data.repository.SettingsRepository
 import com.example.fotogramapp.navigation.*
 import com.example.fotogramapp.ui.theme.CustomIcons
 
@@ -19,6 +24,21 @@ import com.example.fotogramapp.ui.theme.CustomIcons
 fun Navbar(modifier: Modifier = Modifier, navController: NavHostController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
+    val settingsRepository = LocalDataStore.current
+
+    val viewModel: NavbarViewModel = viewModel(
+        factory = viewModelFactory {
+            initializer {
+                NavbarViewModel(settingsRepository)
+            }
+        }
+    )
+
+    //Load userId from DataStore
+    LaunchedEffect(Unit) {
+        viewModel.loadUserId()
+    }
+
 
     if (!(currentDestination.isRoute<SignUp>() || currentDestination.isRoute<CreatePost>())) {
         NavigationBar(
@@ -28,6 +48,7 @@ fun Navbar(modifier: Modifier = Modifier, navController: NavHostController) {
             windowInsets = NavigationBarDefaults.windowInsets,
             containerColor = MaterialTheme.colorScheme.secondary,
         ) {
+            // == Discover ==
             NavigationBarItem(
                 selected = currentDestination.isRoute<Discover>(),
                 onClick = {
@@ -44,6 +65,7 @@ fun Navbar(modifier: Modifier = Modifier, navController: NavHostController) {
                 )
             )
 
+            // == Map ==
             NavigationBarItem(
                 selected = currentDestination.isRoute<MapPage>(),
                 onClick = {
@@ -63,12 +85,13 @@ fun Navbar(modifier: Modifier = Modifier, navController: NavHostController) {
                 },
             )
 
+            // == Profile ==
             NavigationBarItem(
                 selected = currentDestination.isRoute<Profile>(),
                 onClick = {
                     navController.navigate(
                         Profile(
-                            id = 1 //TODO: impostare id del currentUser, prendendolo da storage
+                            id = viewModel.loggedUserId
                         )
                     )
                 },
@@ -81,11 +104,4 @@ fun Navbar(modifier: Modifier = Modifier, navController: NavHostController) {
             )
         }
     }
-}
-
-@Preview
-@Composable
-private fun NavbarPrev() {
-    Navbar(Modifier, rememberNavController())
-    
 }

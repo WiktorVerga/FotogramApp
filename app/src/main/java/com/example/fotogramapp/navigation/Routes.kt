@@ -14,7 +14,7 @@ object CreatePost
 
 //Route with parameters
 @Serializable
-data class Profile(val id: Int)
+data class Profile(val id: Int?)
 
 @Serializable
 data class MapPage(val startingLongitude: Double, val startingLatitude: Double, val zoom: Double)

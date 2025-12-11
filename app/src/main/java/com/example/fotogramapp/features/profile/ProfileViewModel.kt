@@ -2,12 +2,19 @@ package com.example.fotogramapp.features.profile
 
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.fotogramapp.data.database.AppDatabase
 import com.example.fotogramapp.data.repository.PostRepository
+import com.example.fotogramapp.data.repository.SettingsRepository
 import com.example.fotogramapp.data.repository.UserRepository
 import com.example.fotogramapp.domain.model.Post
+import kotlinx.coroutines.launch
 
-class ProfileViewModel: ViewModel() {
-    private val userRepo = UserRepository()
+class ProfileViewModel(
+    private val settingsRepository: SettingsRepository,
+    private val database: AppDatabase
+) : ViewModel() {
+    private val userRepo = UserRepository(database)
     private val postRepo = PostRepository()
 
     // == User Data ==
@@ -17,7 +24,7 @@ class ProfileViewModel: ViewModel() {
     var biography by mutableStateOf("")
         private set
 
-    var profilePicture: String by mutableStateOf("")
+    var profilePicture: String? by mutableStateOf("")
         private set
 
     var followersCount by mutableStateOf(0)
@@ -62,22 +69,25 @@ class ProfileViewModel: ViewModel() {
     // == Methods ==
 
     fun loadUserData(userId: Int) {
-        val user = userRepo.getUser(userId)
+        viewModelScope.launch {
+            val user = userRepo.getUser(userId)
 
+            if (user != null) {
+                username = user.username
+                biography = user.biography
+                profilePicture = user.profilePicture
+                followersCount = user.followersCount
+                followingCount = user.followingCount
+                dob = user.birthDate
+                postCount = user.postCount
+                posts = postRepo.getUserPosts(userId)
 
-        username = user.username
-        biography = user.biography
-        profilePicture = user.profilePicture
-        followersCount = user.followersCount
-        followingCount = user.followingCount
-        dob = user.birthDate
-        postCount = user.postCount
-        posts = postRepo.getUserPosts(userId)
+                isCurrentUser = userId == 1 //Prendi id da DataStore
 
-        isCurrentUser = userId == 1 //Prendi id da DataStore
-
-        if (!isCurrentUser) {
-            isFollowing = true //Prendi da chiamata di rete /user/userId
+                if (!isCurrentUser) {
+                    isFollowing = true //Prendi da chiamata di rete /user/userId
+                }
+            }
         }
     }
 }
