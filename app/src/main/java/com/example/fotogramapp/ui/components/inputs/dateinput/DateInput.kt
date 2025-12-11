@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,8 +33,10 @@ fun DateInput(modifier: Modifier = Modifier, id: String, title: String = "Title"
     val dateInputVM: DateInputViewModel = viewModel(key = id)
 
     LaunchedEffect(dateInputVM.selectedDate) {
-        if (dateInputVM.selectedDate != null) {
-            getStringeDate(dateInputVM.convertMillisToDate(dateInputVM.selectedDate ?: 0))
+        val datePicked = dateInputVM.selectedDate
+
+        if (datePicked != null) {
+            getStringeDate(dateInputVM.convertMillisToDate(datePicked))
         }
     }
 
@@ -60,29 +63,33 @@ fun DateInput(modifier: Modifier = Modifier, id: String, title: String = "Title"
             Column(
                 modifier = modifier
                     .fillMaxWidth()
-                    .clickable {
+            ) {
+                TextButton(
+                    onClick = {
                         dateInputVM.toggleDataPicker()
                     },
-            ) {
-                Text(
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 10.dp),
-                    text = "Select from the Calendar",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Gray
-                )
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        Text(
 
-                dateInputVM.selectedDate?.let {
-                    Text(
-                        text = dateInputVM.convertMillisToDate(it),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
+                            text = "Select from the Calendar",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = Color.Gray
+                        )
+
+                        dateInputVM.selectedDate?.let {
+                            Text(
+                                text = dateInputVM.convertMillisToDate(it),
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
+                    }
                 }
             }
-
-
         }
 
         if (dateInputVM.showDatePicker)

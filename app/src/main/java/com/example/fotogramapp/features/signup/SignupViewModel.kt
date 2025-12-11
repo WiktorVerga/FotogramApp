@@ -1,5 +1,7 @@
 package com.example.fotogramapp.features.signup
 
+import android.graphics.Bitmap
+import android.util.Log
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
@@ -17,7 +19,7 @@ class SignupViewModel(navController: NavController) : ViewModel() {
     var dob by mutableStateOf("")
         private set
 
-    var image by mutableStateOf("")
+    var image by mutableStateOf<Bitmap?>(null)
         private set
 
     // == Handle Functions ==
@@ -34,13 +36,14 @@ class SignupViewModel(navController: NavController) : ViewModel() {
         dob = newDob
     }
 
-    val handleImage: (String) -> Unit = {newImage ->
+    val handleImage: (Bitmap) -> Unit = { newImage ->
         image = newImage
     }
 
     val handleSignup: () -> Unit = {
         //TODO: Aggiungere logica di registrazione
         // Fare chiamate di rete ed inserire userId ritornato nel DataStore
+        Log.d("Signup", "Username: $username, Biography: $biography, DOB: $dob, Image: $image")
         navController.navigate(Discover)
     }
 

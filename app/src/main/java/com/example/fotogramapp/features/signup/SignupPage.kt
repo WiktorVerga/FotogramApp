@@ -24,6 +24,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.fotogramapp.ui.components.buttons.PrimaryButton
 import com.example.fotogramapp.ui.components.inputs.dateinput.DateInput
+import com.example.fotogramapp.ui.components.inputs.imageinput.ImageInput
 import com.example.fotogramapp.ui.components.inputs.textinput.TextInput
 import com.example.fotogramapp.ui.components.post.postcard.PostCardViewModel
 import com.example.fotogramapp.ui.theme.FotogramTheme
@@ -83,6 +84,13 @@ fun SignupPage(modifier: Modifier = Modifier, navController: NavController) {
                 id = "birth_date",
                 title = "Date of Birth",
                 getStringeDate = viewModel.handleDob
+            )
+
+            ImageInput(
+                id = "pfp",
+                title = "Profile Picture",
+                getBitmapImage = viewModel.handleImage,
+                isPfp = true
             )
 
             PrimaryButton(

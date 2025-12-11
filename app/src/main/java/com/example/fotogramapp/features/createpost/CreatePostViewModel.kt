@@ -1,5 +1,6 @@
 package com.example.fotogramapp.features.createpost
 
+import android.graphics.Bitmap
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
@@ -9,7 +10,7 @@ class CreatePostViewModel(navController: NavController) : ViewModel() {
     var message by mutableStateOf("")
         private set
 
-    var image by mutableStateOf("")
+    var image by mutableStateOf<Bitmap?>(null)
         private set
 
     var location by mutableStateOf("")
@@ -20,7 +21,7 @@ class CreatePostViewModel(navController: NavController) : ViewModel() {
         message = newMessage
     }
 
-    val handleImage: (String) -> Unit = {newImage ->
+    val handleImage: (Bitmap) -> Unit = { newImage ->
         image = newImage
     }
 
@@ -28,5 +29,4 @@ class CreatePostViewModel(navController: NavController) : ViewModel() {
         //TODO: Aggiungere logica di creazione di un nuovo post
         navController.popBackStack()
     }
-
 }

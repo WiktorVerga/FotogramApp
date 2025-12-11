@@ -25,6 +25,7 @@ import androidx.navigation.NavController
 import com.example.fotogramapp.features.signup.SignupViewModel
 import com.example.fotogramapp.ui.components.buttons.PrimaryButton
 import com.example.fotogramapp.ui.components.inputs.dateinput.DateInput
+import com.example.fotogramapp.ui.components.inputs.imageinput.ImageInput
 import com.example.fotogramapp.ui.components.inputs.textinput.TextInput
 
 @Composable
@@ -58,7 +59,11 @@ fun CreatePostPage(modifier: Modifier = Modifier, navController: NavController) 
                 style = MaterialTheme.typography.headlineLarge
             )
 
-            //TODO: Image Input
+            ImageInput(
+                id = "image",
+                title = "Pick an Image",
+                getBitmapImage = viewModel.handleImage
+            )
 
             TextInput(
                 id = "message",

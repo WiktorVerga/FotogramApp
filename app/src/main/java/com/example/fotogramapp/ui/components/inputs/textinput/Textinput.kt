@@ -58,7 +58,6 @@ fun TextInput(modifier: Modifier = Modifier,id: String, title: String = "Title",
                 value = textInputVM.text,
                 onValueChange = {
                     textInputVM.onTextChange(it)
-                    Log.d("TextInput", "Text: ${it}")
                     textInputVM.handleValue(minSize, maxSize, getSafeValue)
                 },
                 modifier = Modifier
