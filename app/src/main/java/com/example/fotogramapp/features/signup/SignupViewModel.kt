@@ -28,7 +28,7 @@ class SignupViewModel(
     var dob by mutableStateOf("")
         private set
 
-    var image by mutableStateOf<Bitmap?>(null)
+    var image by mutableStateOf<String>("")
         private set
 
     // == Handle Functions ==
@@ -45,7 +45,7 @@ class SignupViewModel(
         dob = newDob
     }
 
-    val handleImage: (Bitmap) -> Unit = { newImage ->
+    val handleImage: (String) -> Unit = { newImage ->
         image = newImage
     }
 

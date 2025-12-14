@@ -17,7 +17,7 @@ class DiscoverViewModel(
     private val postRepo = PostRepository(database, settingsRepository)
     private val userRepo = UserRepository(database, settingsRepository)
     private val startPagination: Int = 1
-    private val endPagination: Int = 5
+    private val endPagination: Int = 10
 
     var posts by mutableStateOf(listOf<Post>())
         private set

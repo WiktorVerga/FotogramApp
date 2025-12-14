@@ -1,15 +1,57 @@
 package com.example.fotogramapp.ui.components.inputs.imageinput
 
+import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.ImageDecoder
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
+import com.example.fotogramapp.data.utils.toBase64
+import okio.utf8Size
 
 class ImageInputViewModel : ViewModel() {
     var imageUri by mutableStateOf<Uri?>(null)
+        private set
     var bitmap by mutableStateOf<Bitmap?>(null)
+        private set
 
+    var hasError by mutableStateOf(false)
+        private set
+
+
+
+
+    // == Methods ==
+
+    fun getImageFromPicker(uri: Uri?, context: Context, getBase64Image: (String) -> Unit) {
+        imageUri = uri
+
+        imageUri?.let {
+            val source = ImageDecoder
+                .createSource(context.contentResolver,it)
+            bitmap = ImageDecoder.decodeBitmap(source)
+        }
+
+        val base64Image = bitmap.toBase64()
+
+        base64Image?.let {
+            hasError = !imageSizeIsValid(base64Image)
+            if (!hasError) {
+                getBase64Image(base64Image)
+            } else {
+                removeInsert()
+            }
+        }
+
+    }
+
+    fun imageSizeIsValid(base64Image: String) = base64Image.utf8Size() < 80000
+
+    fun removeInsert() {
+        imageUri = null
+        bitmap = null
+    }
 }

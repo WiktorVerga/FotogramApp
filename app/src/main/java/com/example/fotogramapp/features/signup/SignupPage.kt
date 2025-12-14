@@ -99,7 +99,7 @@ fun SignupPage(modifier: Modifier = Modifier) {
             ImageInput(
                 id = "pfp",
                 title = "Profile Picture",
-                getBitmapImage = viewModel.handleImage,
+                getBase64Image = viewModel.handleImage,
                 isPfp = true
             )
 

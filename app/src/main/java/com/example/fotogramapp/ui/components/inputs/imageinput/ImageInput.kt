@@ -46,7 +46,7 @@ import com.example.fotogramapp.ui.components.images.PrimaryImage
 import com.example.fotogramapp.ui.theme.CustomIcons
 
 @Composable
-fun ImageInput(modifier: Modifier = Modifier, id: String, title: String = "Title", getBitmapImage: (Bitmap) -> Unit, isPfp: Boolean = false) {
+fun ImageInput(modifier: Modifier = Modifier, id: String, title: String = "Title", getBase64Image: (String) -> Unit, isPfp: Boolean = false) {
     
     val viewModel: ImageInputViewModel = viewModel(key = id)
     val context = LocalContext.current
@@ -54,28 +54,15 @@ fun ImageInput(modifier: Modifier = Modifier, id: String, title: String = "Title
     val launcher = rememberLauncherForActivityResult(contract =
         ActivityResultContracts.GetContent()) { uri: Uri? ->
 
-        viewModel.imageUri = uri
+        viewModel.getImageFromPicker(uri, context, getBase64Image)
 
-        viewModel.imageUri?.let {
-            val source = ImageDecoder
-                .createSource(context.contentResolver,it)
-            viewModel.bitmap = ImageDecoder.decodeBitmap(source)
-        }
-
-    }
-
-    LaunchedEffect(viewModel.bitmap) {
-        val bitmapPicked = viewModel.bitmap
-        if (bitmapPicked  != null) {
-            getBitmapImage(bitmapPicked)
-        }
     }
     
     Box(
         modifier = modifier
             .fillMaxWidth()
             .background(
-                color = MaterialTheme.colorScheme.surfaceContainer,
+                color = if (viewModel.hasError) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.surfaceContainer,
                 shape = RoundedCornerShape(30.dp)
             ),
     ) {
@@ -92,6 +79,7 @@ fun ImageInput(modifier: Modifier = Modifier, id: String, title: String = "Title
 
             TextButton (
                 onClick = {
+                    viewModel.removeInsert()
                     launcher.launch("image/*")
                 },
                 modifier = modifier
@@ -105,6 +93,9 @@ fun ImageInput(modifier: Modifier = Modifier, id: String, title: String = "Title
                     color = Color.Gray
                 )
             }
+
+            if (viewModel.hasError)
+                Text("Immagine troppo grande", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.error)
 
 
             val bitmapPicked = viewModel.bitmap
@@ -129,7 +120,7 @@ fun ImageInput(modifier: Modifier = Modifier, id: String, title: String = "Title
 
                     TextButton(
                         onClick = {
-                            viewModel.bitmap = null
+                            viewModel.removeInsert()
                         },
                     ) {
                         Icon(

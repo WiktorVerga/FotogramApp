@@ -60,6 +60,7 @@ fun Navigator(
             }
             composable<Profile> {
                 val args = it.toRoute<Profile>()
+
                 args.id?.let {
                     ProfilePage(navController = navController, userId = args.id)
                 }

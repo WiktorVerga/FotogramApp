@@ -5,10 +5,10 @@ import com.example.fotogramapp.domain.model.Post
 
 @Dao
 interface PostDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertPost(post: Post)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertPosts(posts: List<Post>)
 
     @Query("SELECT * FROM Post WHERE id = :id")

@@ -88,6 +88,8 @@ class ProfileViewModel(
 
     // == Methods ==
     fun loadUserData(userId: Int) {
+        Log.d("ProfileViewModel", "Sto caricando i dati dell'utente: ${userId}")
+
         viewModelScope.launch {
             val user = userRepo.getUser(userId)
 

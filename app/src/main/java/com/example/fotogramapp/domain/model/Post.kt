@@ -6,22 +6,12 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.mapbox.geojson.Point
 
-@Entity(
-    foreignKeys = [
-        ForeignKey(
-            entity = User::class,
-            parentColumns = ["id"],
-            childColumns = ["authorId"],
-            onDelete = ForeignKey.CASCADE
-        )
-    ],
-    indices = [Index(value = ["authorId"])]
-)
+@Entity
 class Post(
     @PrimaryKey val id: Int,
     val authorId: Int,
     val message: String,
     val image: String,
-    val location: Point?,
+    val location: Point? = null,
     val lastUpdated: Long = System.currentTimeMillis()
 )

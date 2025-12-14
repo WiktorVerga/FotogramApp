@@ -29,7 +29,19 @@ class UserRepository(
             isYourFollower = false,
             isYourFollowing = false
         ),
-
+        User(
+            id = 2,
+            username = "Second User",
+            biography = "This is a biography",
+            birthDate = "01/01/2002",
+            profilePicture = "",
+            followersCount = 10,
+            followingCount = 3,
+            postCount = 2,
+            postIds = listOf(4),
+            isYourFollower = false,
+            isYourFollowing = false
+        ),
     )
 
     suspend fun getUser(id: Int): User? {
@@ -85,7 +97,10 @@ class UserRepository(
         if (user != null) {
             user.isYourFollowing = false
             cacheUser(user)
-
         }
+    }
+
+    suspend fun updateUser(user: User) {
+        userDao.insertUser(user)
     }
 }

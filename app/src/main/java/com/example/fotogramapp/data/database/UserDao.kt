@@ -5,8 +5,11 @@ import com.example.fotogramapp.domain.model.User
 
 @Dao
 interface UserDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertUser(user: User)
+
+    @Delete
+    suspend fun deleteUser(user: User)
 
     @Query("SELECT * FROM User WHERE id = :id")
     suspend fun getUserById(id: Int): User?

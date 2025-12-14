@@ -57,15 +57,28 @@ class PostRepository(private val database: AppDatabase, private val settingsRepo
         }
     }
 
-    suspend fun addPost(message: String, image: Bitmap?, location: String?) {
-        //TODO: richiesta di rete post
-        cachePost(Post(
-            id = 5,
-            authorId = 1,
+    suspend fun addPost(message: String, image: String, location: String?) {
+        //TODO: richiesta di rete post, ricevo anche dati per id, authorId
+        val authorId = 1
+        val id = 10
+
+        val newPost = Post(
+            id = id,
+            authorId = authorId,
             message = message,
-            image = image.toBase64() ?: "",
-            location = null,
-        ))
+            image = image,
+            location = null
+        )
+
+        val updatedUser = userRepo.getUser(authorId)
+
+        updatedUser?.let {
+            it.postIds += newPost.id
+            it.postCount++
+            userRepo.updateUser(updatedUser)
+            cachePost(newPost)
+        }
+
     }
 
     suspend fun getPosts(ids: List<Int>): List<Post> {
@@ -84,7 +97,6 @@ class PostRepository(private val database: AppDatabase, private val settingsRepo
 
         return posts.filterNotNull()
     }
-
 
     suspend fun cachePost(post: Post) {
         postDao.clear(post.id)

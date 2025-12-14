@@ -21,7 +21,7 @@ class CreatePostViewModel(
     var message by mutableStateOf("")
         private set
 
-    var image by mutableStateOf<Bitmap?>(null)
+    var image by mutableStateOf<String>("")
         private set
 
     var location by mutableStateOf("")
@@ -32,7 +32,7 @@ class CreatePostViewModel(
         message = newMessage
     }
 
-    val handleImage: (Bitmap) -> Unit = { newImage ->
+    val handleImage: (String) -> Unit = { newImage ->
         image = newImage
     }
 

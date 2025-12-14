@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -22,7 +23,8 @@ import com.example.fotogramapp.navigation.*
 import com.example.fotogramapp.ui.theme.CustomIcons
 
 @Composable
-fun Navbar(modifier: Modifier = Modifier, navController: NavHostController) {
+fun Navbar(modifier: Modifier = Modifier, navController: NavController) {
+
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     val settingsRepository = LocalDataStore.current
@@ -30,16 +32,10 @@ fun Navbar(modifier: Modifier = Modifier, navController: NavHostController) {
     val viewModel: NavbarViewModel = viewModel(
         factory = viewModelFactory {
             initializer {
-                NavbarViewModel(settingsRepository)
+                NavbarViewModel(settingsRepository, navController)
             }
         }
     )
-
-    //Load userId from DataStore
-    LaunchedEffect(Unit) {
-        viewModel.loadUserId()
-        Log.d("Navbar", "LoggedUserId: ${viewModel.loggedUserId}")
-    }
 
 
     if (!(currentDestination.isRoute<SignUp>() || currentDestination.isRoute<CreatePost>())) {
@@ -91,11 +87,7 @@ fun Navbar(modifier: Modifier = Modifier, navController: NavHostController) {
             NavigationBarItem(
                 selected = currentDestination.isRoute<Profile>(),
                 onClick = {
-                    navController.navigate(
-                        Profile(
-                            id = viewModel.loggedUserId
-                        )
-                    )
+                    viewModel.handleProfileNav()
                 },
                 icon = {
                     Icon(

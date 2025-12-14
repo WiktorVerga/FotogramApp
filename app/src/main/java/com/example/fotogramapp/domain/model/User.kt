@@ -6,16 +6,16 @@ import androidx.room.PrimaryKey
 @Entity
 class User(
     @PrimaryKey val id: Int,
-    val username: String,
-    val biography: String,
-    val birthDate: String,
-    val profilePicture: String?,
+    var username: String,
+    var biography: String,
+    var birthDate: String,
+    var profilePicture: String?,
     var isYourFollower: Boolean,
     var isYourFollowing: Boolean,
-    val followersCount: Int,
-    val followingCount: Int,
-    val postCount: Int,
-    val postIds: List<Int>,
+    var followersCount: Int,
+    var followingCount: Int,
+    var postCount: Int,
+    var postIds: List<Int>,
     var lastUpdated: Long = System.currentTimeMillis()
 ) {
 }

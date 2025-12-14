@@ -66,7 +66,7 @@ fun CreatePostPage(modifier: Modifier = Modifier) {
             ImageInput(
                 id = "image",
                 title = "Pick an Image",
-                getBitmapImage = viewModel.handleImage
+                getBase64Image = viewModel.handleImage
             )
 
             TextInput(
