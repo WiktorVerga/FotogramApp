@@ -1,4 +1,4 @@
-package com.example.fotogramapp.ui.components.post
+
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

@@ -10,32 +10,6 @@ class PostRepository(private val database: AppDatabase, private val settingsRepo
     val postDao = database.postDao()
     val userRepo = UserRepository(database, settingsRepository)
 
-
-    private val allPosts = listOf<Post>(
-        Post(
-            id = 1,
-            authorId = 1,
-            message = "Hello World!",
-            image = "dousahyudhas",
-            location = Point.fromLngLat(10.0, 49.0)
-        ),
-        Post(
-            id = 2,
-            authorId = 1,
-            message = "I'm not only hellowing the world, I'm in it hehe",
-            image = "dousahyudhas",
-            location = Point.fromLngLat(10.0, 49.0)
-        ),
-        Post(
-            id = 3,
-            authorId = 1,
-            message = "The third post I'm now famous",
-            image = "dousahyudhas",
-            location = Point.fromLngLat(10.0, 49.0)
-        ),
-
-    )
-
     // == Get Posts ==
     suspend fun getPost(id: Int): Post? {
         val cachedPost = postDao.getPostById(id)
@@ -44,7 +18,7 @@ class PostRepository(private val database: AppDatabase, private val settingsRepo
             return cachedPost
         } else {
             //TODO: chiamata di rete per prendere il post
-            val remotePost = allPosts.find { it.id == id }
+            val remotePost = null
 
             if (remotePost != null) {
                 //Riaggiorno la Cache
@@ -59,25 +33,7 @@ class PostRepository(private val database: AppDatabase, private val settingsRepo
 
     suspend fun addPost(message: String, image: String, location: String?) {
         //TODO: richiesta di rete post, ricevo anche dati per id, authorId
-        val authorId = 1
-        val id = 10
-
-        val newPost = Post(
-            id = id,
-            authorId = authorId,
-            message = message,
-            image = image,
-            location = null
-        )
-
-        val updatedUser = userRepo.getUser(authorId)
-
-        updatedUser?.let {
-            it.postIds += newPost.id
-            it.postCount++
-            userRepo.updateUser(updatedUser)
-            cachePost(newPost)
-        }
+        TODO()
 
     }
 
@@ -99,20 +55,11 @@ class PostRepository(private val database: AppDatabase, private val settingsRepo
     }
 
     suspend fun cachePost(post: Post) {
-        postDao.clear(post.id)
-        postDao.insertPost(post)
+        TODO()
     }
 
     suspend fun getUserPosts(userId: Int): List<Post> {
-        //TODO: fai chiamata di rete per prendere gli id dei post dell'utente
-        // risultato della chiamata di rete: lista di id
-        val remotePosts = userRepo.getUser(userId)?.postIds //Momentaneamente simula la chiamata
-
-        if (remotePosts == null) {
-            return listOf()
-        }
-
-        return getPosts(remotePosts)
+        TODO()
     }
 
 }

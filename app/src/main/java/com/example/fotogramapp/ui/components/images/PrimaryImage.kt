@@ -26,7 +26,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import com.example.fotogramapp.R
-import com.example.fotogramapp.data.utils.ImageUtils
 import com.example.fotogramapp.data.utils.toBitmap
 import com.example.fotogramapp.ui.components.images.zoomoverlays.PrimaryImageZoom
 import com.example.fotogramapp.ui.theme.shimmerEffect

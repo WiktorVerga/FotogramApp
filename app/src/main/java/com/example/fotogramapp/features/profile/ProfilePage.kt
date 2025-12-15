@@ -1,5 +1,6 @@
 package com.example.fotogramapp.features.profile
 
+import PostCard
 import android.graphics.Bitmap
 import android.util.Log
 import androidx.compose.foundation.background
@@ -39,7 +40,6 @@ import com.example.fotogramapp.features.profile.components.BentoInformation
 import com.example.fotogramapp.ui.components.buttons.FollowButton
 import com.example.fotogramapp.ui.components.buttons.PrimaryButton
 import com.example.fotogramapp.ui.components.images.PrimaryImage
-import com.example.fotogramapp.ui.components.post.PostCard
 import com.example.fotogramapp.ui.components.title.LargeHeadline
 import com.example.fotogramapp.ui.theme.FotogramTheme
 import kotlinx.coroutines.CoroutineScope

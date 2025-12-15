@@ -31,4 +31,9 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
             preferences[SESSION_ID] = sessonId
         }
     }
+
+    suspend fun getSessionId(): String? {
+        val prefs = dataStore.data.first()
+        return prefs[SESSION_ID]
+    }
 }

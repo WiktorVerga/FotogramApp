@@ -96,12 +96,12 @@ class ProfileViewModel(
             if (user != null) {
                 id = user.id
                 username = user.username
-                biography = user.biography
+                biography = user.bio
                 profilePicture = user.profilePicture
                 followersCount = user.followersCount
                 followingCount = user.followingCount
-                dob = user.birthDate
-                postCount = user.postCount
+                dob = user.dateOfBirth
+                postCount = user.postsCount
                 posts = postRepo.getUserPosts(userId)
 
                 isCurrentUser = userRepo.isLoggedUser(userId)

@@ -1,5 +1,6 @@
 package com.example.fotogramapp.features.discover
 
+import PostCard
 import android.util.Log
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.fotogramapp.LocalAppDatabase
@@ -26,7 +28,6 @@ import com.example.fotogramapp.LocalDataStore
 import com.example.fotogramapp.data.database.AppDatabase
 import com.example.fotogramapp.navigation.CreatePost
 import com.example.fotogramapp.navigation.LocalNavController
-import com.example.fotogramapp.ui.components.post.PostCard
 import com.example.fotogramapp.ui.components.title.LargeHeadline
 import com.example.fotogramapp.ui.theme.FotogramTheme
 

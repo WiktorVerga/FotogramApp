@@ -3,75 +3,34 @@ package com.example.fotogramapp.data.repository
 import android.util.Log
 import com.example.fotogramapp.data.database.AppDatabase
 import com.example.fotogramapp.domain.model.User
+import com.example.testing_apis.model.RemoteDataSource
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class UserRepository(
     private val database: AppDatabase,
     private val settingsRepository: SettingsRepository
 ) {
+    private lateinit var remoteDataSource: RemoteDataSource
 
-    val userDao = database.userDao()
+    init {
+        CoroutineScope(Dispatchers.IO).launch {
+            val sessionId = settingsRepository.getSessionId()
 
-    companion object {
-        private const val CACHE_TIMEOUT = 60 * 60 * 1000 // 1 ora
-    }
-
-    private val allUsers = listOf<User>(
-        User(
-            id = 1,
-            username = "First User",
-            biography = "This is a biography",
-            birthDate = "01/01/2002",
-            profilePicture = "",
-            followersCount = 10,
-            followingCount = 3,
-            postCount = 2,
-            postIds = listOf(1, 2, 3),
-            isYourFollower = false,
-            isYourFollowing = false
-        ),
-        User(
-            id = 2,
-            username = "Second User",
-            biography = "This is a biography",
-            birthDate = "01/01/2002",
-            profilePicture = "",
-            followersCount = 10,
-            followingCount = 3,
-            postCount = 2,
-            postIds = listOf(4),
-            isYourFollower = false,
-            isYourFollowing = false
-        ),
-    )
-
-    suspend fun getUser(id: Int): User? {
-        val cachedUser = userDao.getUserById(id)
-
-        val now = System.currentTimeMillis()
-
-        if (cachedUser != null && (now - cachedUser.lastUpdated) < CACHE_TIMEOUT) {
-            Log.d("ProfileViewModel", "Returning cached user")
-            return cachedUser
-        } else {
-            //TODO: prendi dalla rete
-            val remoteUser = allUsers.find { it.id == id }
-
-            if (remoteUser != null) {
-                remoteUser.lastUpdated = now
-
-                //Riaggiorno la Cache
-                cacheUser(remoteUser)
-
-                return remoteUser
+            if (sessionId != null) {
+                remoteDataSource = RemoteDataSource(sessionId)
             }
-
-            return null
         }
     }
 
-    suspend fun cacheUser(user: User) {
-        userDao.clear(user.id)
-        userDao.insertUser(user)
+    // == Get User ==
+
+    suspend fun getUser(id: Int): User? {
+        //Prendo da Rete
+        val remoteUser = remoteDataSource.getUserDetails(id)
+
+        return remoteUser
     }
 
     suspend fun isLoggedUser(userId: Int) = userId == settingsRepository.getLoggedUserId()
@@ -81,26 +40,12 @@ class UserRepository(
     // == Update User ==
     suspend fun followUser(userId: Int) {
         //TODO: chiamata per fare il follow
-
-        val user = getUser(userId)
-        if (user != null) {
-            user.isYourFollowing = true
-            cacheUser(user)
-
-        }
+        TODO()
     }
 
     suspend fun unFollowUser(userId: Int) {
         //TODO: chiamata per fare il unfollow
 
-        val user = getUser(userId)
-        if (user != null) {
-            user.isYourFollowing = false
-            cacheUser(user)
-        }
-    }
-
-    suspend fun updateUser(user: User) {
-        userDao.insertUser(user)
+        TODO()
     }
 }
