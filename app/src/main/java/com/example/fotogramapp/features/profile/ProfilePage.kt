@@ -9,12 +9,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,6 +32,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.fotogramapp.LocalAppDatabase
 import com.example.fotogramapp.LocalDataStore
+import com.example.fotogramapp.app.LocalNavController
 import com.example.fotogramapp.data.database.AppDatabase
 import com.example.fotogramapp.data.repository.PostRepository
 import com.example.fotogramapp.data.repository.SettingsRepository
@@ -42,12 +45,14 @@ import com.example.fotogramapp.ui.components.buttons.PrimaryButton
 import com.example.fotogramapp.ui.components.images.PrimaryImage
 import com.example.fotogramapp.ui.components.title.LargeHeadline
 import com.example.fotogramapp.ui.theme.FotogramTheme
+import com.example.fotogramapp.ui.theme.shimmerEffect
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
-fun ProfilePage(modifier: Modifier = Modifier, navController: NavHostController, userId: Int) {
+fun ProfilePage(modifier: Modifier = Modifier, userId: Int) {
+
     val settingsRepository = LocalDataStore.current
     val db = LocalAppDatabase.current
     val viewModel: ProfileViewModel = viewModel(
@@ -63,81 +68,91 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavHostController,
         viewModel.loadUserData(userId)
     }
 
-    LazyColumn (
-        modifier = modifier
-            .fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(30.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
+    if (viewModel.loading) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) { CircularProgressIndicator() }
 
-        // == Profile Header ==
-        item {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(20.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Box(
+    } else {
+        LazyColumn(
+            modifier = modifier
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(30.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+
+            // == Profile Header ==
+            item {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(20.dp),
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
-                        .size(80.dp)
-                        .border(
-                            width = 1.dp,
-                            color = MaterialTheme.colorScheme.primary,
-                            shape = CircleShape
-                        )
-                        .background(MaterialTheme.colorScheme.tertiaryContainer, CircleShape)
-
+                        .fillMaxWidth()
                 ) {
-                    PrimaryImage(image64 = viewModel.profilePicture, isPfp = true)
-                }
-                Column() {
-                    Text(
-                        text = if (viewModel.isCurrentUser) "Hello!" else "This is:",
-                        style = MaterialTheme.typography.labelLarge,
-                    )
-                    Text(
-                        text = viewModel.username, style = MaterialTheme.typography.headlineMedium,
-                    )
-                }
-            }
+                    Box(
+                        modifier = Modifier
+                            .size(80.dp)
+                            .border(
+                                width = 1.dp,
+                                color = MaterialTheme.colorScheme.primary,
+                                shape = CircleShape
+                            )
+                            .background(MaterialTheme.colorScheme.tertiaryContainer, CircleShape)
 
-            // == Bento Information ==
-            BentoInformation(
-                modifier = Modifier
-                    .padding(vertical = 20.dp),
-                biograpy = viewModel.biography,
-                followers = viewModel.followersCount,
-                following = viewModel.followingCount,
-                dob = viewModel.dob,
-                postCounter = viewModel.postCount,
-            )
+                    ) {
+                        PrimaryImage(image64 = viewModel.profilePicture, isPfp = true)
+                    }
+                    Column() {
+                        Text(
+                            text = if (viewModel.isCurrentUser) "Hello!" else "This is:",
+                            style = MaterialTheme.typography.labelLarge,
+                        )
+                        Text(
+                            text = viewModel.username,
+                            style = MaterialTheme.typography.headlineMedium,
+                        )
+                    }
+                }
 
-            // == Follow / Edit Button ==
-            if (viewModel.isCurrentUser) {
-                PrimaryButton(text = "Edit Profile", onClick = {
-                    //TODO: aggiungi azione bottone e condizione per currentUser
-                })
-            } else {
-                FollowButton(
-                    isFollowing = viewModel.isFollowing,
-                    onClick = viewModel.handleFollowToggle,
+                // == Bento Information ==
+                BentoInformation(
+                    modifier = Modifier
+                        .padding(vertical = 20.dp),
+                    biograpy = viewModel.biography,
+                    followers = viewModel.followersCount,
+                    following = viewModel.followingCount,
+                    dob = viewModel.dob,
+                    postCounter = viewModel.postCount,
                 )
+
+                // == Follow / Edit Button ==
+                if (viewModel.isCurrentUser) {
+                    PrimaryButton(text = "Edit Profile", onClick = {
+                        //TODO: aggiungi azione bottone e condizione per currentUser
+                    })
+                } else {
+                    FollowButton(
+                        isFollowing = viewModel.isFollowing,
+                        onClick = viewModel.handleFollowToggle,
+                    )
+                }
+
+                // == Posts Title ==
+                LargeHeadline("Posts \uD83C\uDF1F")
             }
 
-            // == Posts Title ==
-            LargeHeadline("Posts \uD83C\uDF1F")
-        }
 
+            // == Posts ==
+            itemsIndexed(viewModel.posts) { index, post ->
+                PostCard(key = index.toString(), post = post)
+            }
 
-        // == Posts ==
-        itemsIndexed(viewModel.posts) { index, post ->
-            PostCard(key = index.toString(), post = post)
-        }
-
-        // == End Spacer ==
-        item {
-            Box(modifier = Modifier.size(50.dp))
+            // == End Spacer ==
+            item {
+                Box(modifier = Modifier.size(50.dp))
+            }
         }
     }
 }

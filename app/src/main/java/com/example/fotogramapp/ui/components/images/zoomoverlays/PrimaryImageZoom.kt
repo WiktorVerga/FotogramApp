@@ -137,13 +137,3 @@ fun PrimaryImageZoom(
         }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-private fun ImageZoomPrev() {
-    PrimaryImageZoom(
-        image = null,
-        onDismiss = {  },
-    )
-
-}

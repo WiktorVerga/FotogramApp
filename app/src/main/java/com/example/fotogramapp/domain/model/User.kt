@@ -12,7 +12,7 @@ data class User(
     val username: String,
     val bio: String,
     val dateOfBirth: String,
-    val profilePicture: String,
+    val profilePicture: String? = null,
     val isYourFollower: Boolean,
     val isYourFollowing: Boolean,
     val followersCount: Int,

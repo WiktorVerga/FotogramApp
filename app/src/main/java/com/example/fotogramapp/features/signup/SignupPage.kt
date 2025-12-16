@@ -23,6 +23,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.fotogramapp.LocalDataStore
+import com.example.fotogramapp.app.LocalSnackbar
 import com.example.fotogramapp.data.database.AppDatabase
 import com.example.fotogramapp.data.repository.SettingsRepository
 import com.example.fotogramapp.navigation.LocalNavController
@@ -38,6 +39,7 @@ fun SignupPage(modifier: Modifier = Modifier) {
 
     val navController = LocalNavController.current
     val settingsRepository = LocalDataStore.current
+    val snackbarHostState = LocalSnackbar.current
 
     val viewModel: SignupViewModel = viewModel(
         factory = viewModelFactory {
@@ -45,6 +47,7 @@ fun SignupPage(modifier: Modifier = Modifier) {
                 SignupViewModel(
                     navController = navController,
                     settingsRepository = settingsRepository,
+                    snackBarHostState = snackbarHostState
                 )
             }
         }

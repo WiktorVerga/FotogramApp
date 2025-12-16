@@ -3,6 +3,10 @@ package com.example.fotogramapp.data.utils
 import android.graphics.Bitmap
 import android.util.Base64
 import android.graphics.BitmapFactory
+import android.util.Log
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 
 
@@ -10,21 +14,22 @@ import java.io.ByteArrayOutputStream
     if (this == "") return null
 
     return try {
-        val decodedBytes = Base64.decode(this, Base64.DEFAULT)
+        val decodedBytes = Base64.decode(this, Base64.NO_WRAP)
         BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
     } catch (e: Exception) {
         null
     }
 }
 
-fun Bitmap?.toBase64(): String? {
-    if (this == null) return null
+suspend fun Bitmap?.toBase64(): String? = withContext(Dispatchers.IO) {
+    if (this@toBase64 == null) return@withContext null
 
-    return try {
+    try {
+        Log.d("ImageInputViewModel", "Sto prendendo l'immagine da Picker")
         val outputStream = ByteArrayOutputStream()
-        this.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        this@toBase64.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
         val byteArray = outputStream.toByteArray()
-        Base64.encodeToString(byteArray, Base64.DEFAULT)
+        Base64.encodeToString(byteArray, Base64.NO_WRAP)
     } catch (e: Exception) {
         null
     }

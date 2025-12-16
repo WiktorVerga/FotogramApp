@@ -1,6 +1,5 @@
 package com.example.fotogramapp.data.repository
 
-import android.util.Log
 import com.example.fotogramapp.data.database.AppDatabase
 import com.example.fotogramapp.domain.model.User
 import com.example.testing_apis.model.RemoteDataSource
@@ -12,23 +11,20 @@ class UserRepository(
     private val database: AppDatabase,
     private val settingsRepository: SettingsRepository
 ) {
-    private lateinit var remoteDataSource: RemoteDataSource
+    private val remoteDataSource = RemoteDataSource()
 
     init {
         CoroutineScope(Dispatchers.IO).launch {
-            val sessionId = settingsRepository.getSessionId()
-
-            if (sessionId != null) {
-                remoteDataSource = RemoteDataSource(sessionId)
-            }
+            settingsRepository.getSessionId()?.let { remoteDataSource.provideSessionId(it) }
         }
     }
 
+
     // == Get User ==
 
-    suspend fun getUser(id: Int): User? {
+    suspend fun getUser(id: Int): User {
         //Prendo da Rete
-        val remoteUser = remoteDataSource.getUserDetails(id)
+        val remoteUser = remoteDataSource.getUser(id)
 
         return remoteUser
     }

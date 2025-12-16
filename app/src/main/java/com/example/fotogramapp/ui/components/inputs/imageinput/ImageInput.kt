@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
@@ -44,20 +45,29 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.fotogramapp.ui.components.images.PrimaryImage
 import com.example.fotogramapp.ui.theme.CustomIcons
+import com.example.fotogramapp.ui.theme.shimmerEffect
 
 @Composable
-fun ImageInput(modifier: Modifier = Modifier, id: String, title: String = "Title", getBase64Image: (String) -> Unit, isPfp: Boolean = false) {
-    
+fun ImageInput(
+    modifier: Modifier = Modifier,
+    id: String,
+    title: String = "Title",
+    getBase64Image: (String) -> Unit,
+    isPfp: Boolean = false
+) {
+
     val viewModel: ImageInputViewModel = viewModel(key = id)
     val context = LocalContext.current
 
-    val launcher = rememberLauncherForActivityResult(contract =
-        ActivityResultContracts.GetContent()) { uri: Uri? ->
+    val launcher = rememberLauncherForActivityResult(
+        contract =
+            ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
 
         viewModel.getImageFromPicker(uri, context, getBase64Image)
 
     }
-    
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -72,66 +82,85 @@ fun ImageInput(modifier: Modifier = Modifier, id: String, title: String = "Title
                 .padding(20.dp)
 
         ) {
-            Text(title,
+            Text(
+                title,
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.ExtraBold
             )
 
-            TextButton (
-                onClick = {
-                    viewModel.removeInsert()
-                    launcher.launch("image/*")
-                },
-                modifier = modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 10.dp),
+            if (!viewModel.loading) {
+                TextButton(
+                    onClick = {
+                        viewModel.removeInsert()
+                        launcher.launch("image/*")
+                    },
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 10.dp),
 
-            ) {
-                Text(
-                    text = "Choose Image",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = Color.Gray
-                )
-            }
+                    ) {
+                    Text(
+                        text = "Choose Image",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = Color.Gray
+                    )
+                }
 
-            if (viewModel.hasError)
-                Text("Immagine troppo grande", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.error)
+                if (viewModel.hasError)
+                    Text(
+                        "Immagine troppo grande",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.error
+                    )
 
 
-            val bitmapPicked = viewModel.bitmap
-            if (bitmapPicked != null) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    Box(
+                val bitmapPicked = viewModel.bitmap
+                val imageUri = viewModel.imageUri
+
+                if (imageUri != null) {
+                    Row(
                         modifier = Modifier
-                            .size(100.dp)
-                            .clip(RoundedCornerShape(15.dp)),
-                        contentAlignment = Alignment.Center
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
                     ) {
-                        PrimaryImage(
-                            imageBitmap = bitmapPicked,
-                            isPfp = isPfp
-                        )
-                    }
-
-                    TextButton(
-                        onClick = {
-                            viewModel.removeInsert()
-                        },
-                    ) {
-                        Icon(
+                        Box(
                             modifier = Modifier
-                                .size(25.dp),
-                            painter = painterResource(CustomIcons.Exit),
-                            contentDescription = "Exit Icon",
-                            tint = Color.Gray
-                        )
+                                .size(100.dp)
+                                .clip(RoundedCornerShape(15.dp)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            PrimaryImage(
+                                imageBitmap = bitmapPicked,
+                                isPfp = isPfp
+                            )
+                        }
+
+
+
+                        TextButton(
+                            onClick = {
+                                viewModel.removeInsert()
+                            },
+                        ) {
+                            Icon(
+                                modifier = Modifier
+                                    .size(25.dp),
+                                painter = painterResource(CustomIcons.Exit),
+                                contentDescription = "Exit Icon",
+                                tint = Color.Gray
+                            )
+                        }
                     }
                 }
+            } else {
+                Box(
+                    modifier = Modifier
+                        .size(100.dp)
+                        .padding(vertical = 5.dp)
+                        .clip(RoundedCornerShape(15.dp))
+                        .shimmerEffect(),
+                )
             }
         }
     }

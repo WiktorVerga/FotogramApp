@@ -1,6 +1,8 @@
 package com.example.fotogramapp.ui.components.post
 
+import android.util.Log
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
@@ -58,21 +60,7 @@ class PostCardViewModel(
     // == Methods ==
 
     fun loadPostData(post: Post) {
-        viewModelScope.launch {
-            val user = userRepo.getUser(post.authorId)
-            if (user != null) {
-                //Creator Data
-                creatorPicture = user.profilePicture
-                creatorId = user.id
-                creatorUsername = user.username
-                isCurrentUser = post.authorId == 1 //Prendi id da DataStore
 
-                //Post Data
-                message = post.message
-                image = post.image
-                hasLocation = post.location != null
-            }
-        }
     }
 
 

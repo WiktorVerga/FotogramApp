@@ -5,6 +5,7 @@ import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fotogramapp.data.database.AppDatabase
+import com.example.fotogramapp.data.remote.APIException
 import com.example.fotogramapp.data.repository.PostRepository
 import com.example.fotogramapp.data.repository.SettingsRepository
 import com.example.fotogramapp.data.repository.UserRepository
@@ -17,6 +18,11 @@ class ProfileViewModel(
 ) : ViewModel() {
     private val userRepo = UserRepository(database, settingsRepository)
     private val postRepo = PostRepository(database, settingsRepository)
+
+    // == State ==
+    var loading by mutableStateOf(true)
+        private set
+
 
     // == User Data ==
     var id by mutableStateOf<Int?>(null)
@@ -91,9 +97,10 @@ class ProfileViewModel(
         Log.d("ProfileViewModel", "Sto caricando i dati dell'utente: ${userId}")
 
         viewModelScope.launch {
-            val user = userRepo.getUser(userId)
+            loading = true
+            try {
+                val user = userRepo.getUser(userId)
 
-            if (user != null) {
                 id = user.id
                 username = user.username
                 biography = user.bio
@@ -102,7 +109,7 @@ class ProfileViewModel(
                 followingCount = user.followingCount
                 dob = user.dateOfBirth
                 postCount = user.postsCount
-                posts = postRepo.getUserPosts(userId)
+
 
                 isCurrentUser = userRepo.isLoggedUser(userId)
                 Log.d("ProfileViewModel", "isCurrentUser: $isCurrentUser")
@@ -111,7 +118,10 @@ class ProfileViewModel(
                     Log.d("ProfileViewModel", "isFollowing: ${user.isYourFollowing}")
                     isFollowing = user.isYourFollowing
                 }
+            } catch (error: APIException) {
+                error.message?.let { Log.d("ProfileViewModel", it) }
             }
+            loading = false
         }
     }
 }

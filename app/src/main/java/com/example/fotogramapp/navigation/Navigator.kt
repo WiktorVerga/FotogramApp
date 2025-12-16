@@ -30,7 +30,6 @@ fun Navigator(
     modifier: Modifier = Modifier,
     navController: NavHostController,
 ) {
-
     val settingsRepository = LocalDataStore.current
     val viewModel: NavigatorViewModel = viewModel(
         factory = viewModelFactory {
@@ -45,34 +44,30 @@ fun Navigator(
         viewModel.checkFirstAccess()
     }
 
-    CompositionLocalProvider(
-        LocalNavController provides navController
+    NavHost(
+        navController = navController,
+        startDestination = if (viewModel.isFirstAccess) SignUp else Discover,
     ) {
-        NavHost(
-            navController = navController,
-            startDestination = if (viewModel.isFirstAccess) SignUp else Discover,
-        ) {
-            composable<SignUp> {
-                SignupPage()
-            }
-            composable<Discover> {
-                DiscoverPage()
-            }
-            composable<Profile> {
-                val args = it.toRoute<Profile>()
+        composable<SignUp> {
+            SignupPage()
+        }
+        composable<Discover> {
+            DiscoverPage()
+        }
+        composable<Profile> {
+            val args = it.toRoute<Profile>()
 
-                args.id?.let {
-                    ProfilePage(navController = navController, userId = args.id)
-                }
+            args.id?.let {
+                ProfilePage(userId = args.id)
+            }
 
-            }
-            composable<CreatePost> {
-                CreatePostPage()
-            }
-            composable<MapPage> {
-                //TODO: MapPage Page
-                Text("MapPage")
-            }
+        }
+        composable<CreatePost> {
+            CreatePostPage()
+        }
+        composable<MapPage> {
+            //TODO: MapPage Page
+            Text("MapPage")
         }
     }
 }

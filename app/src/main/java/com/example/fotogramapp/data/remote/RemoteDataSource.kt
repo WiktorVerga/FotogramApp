@@ -2,7 +2,9 @@ package com.example.testing_apis.model
 
 import android.util.Log
 import androidx.core.net.toUri
-import com.example.fotogramapp.data.repository.SettingsRepository
+import com.example.fotogramapp.data.remote.APIException
+import com.example.fotogramapp.data.remote.RemoteError
+import com.example.fotogramapp.data.remote.UserLogged
 import com.example.fotogramapp.domain.model.User
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -20,10 +22,15 @@ import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.client.engine.okhttp.OkHttp
 import kotlinx.serialization.json.Json
+import kotlin.jvm.Throws
 
-class RemoteDataSource(
-    private val sessionId: String
-) {
+class RemoteDataSource(val sessionId: String = "") {
+
+    private var SESSION_ID = sessionId
+
+    fun provideSessionId(value: String) {
+        SESSION_ID = value
+    }
 
     companion object {
         private const val BASE_URL = "https://develop.ewlab.di.unimi.it/mc/2526/"
@@ -43,6 +50,7 @@ class RemoteDataSource(
                 json(
                     Json {
                         ignoreUnknownKeys = true
+                        coerceInputValues = true
                     }
                 )
             }
@@ -73,7 +81,7 @@ class RemoteDataSource(
             }
             headers {
                 append("x-session-id",
-                    sessionId
+                    SESSION_ID
                 )
             }
         }
@@ -90,37 +98,85 @@ class RemoteDataSource(
 
     // == User API ==
 
-    suspend fun signUpUser(): Pair<Int, String>? {
+    suspend fun signUpUser(): Pair<Int, String> {
         val httpResponse = genericRequest(
             endpoint = "user",
             method = HttpMethod.POST
         )
 
+
+
+
         when(httpResponse.status.value) {
-            200 -> return httpResponse.body() as Pair<Int, String>
+            200 -> {
+                val responseObj = httpResponse.body<UserLogged>()
+
+                return Pair(responseObj.userId, responseObj.sessionId)
+            }
             else -> {
-                return null
+                throw APIException(httpResponse.body<RemoteError>().message)
             }
         }
     }
 
-    suspend fun getUserDetails(
+    suspend fun updateUserDetails(
+        username: String? = null,
+        bio: String? = null,
+        dob: String? = null
+    ): User {
+
+        val bodyParams = mutableMapOf<String, Any>()
+
+        username?.let { bodyParams["username"] = it }
+        bio?.let { bodyParams["bio"] = it }
+        dob?.let { bodyParams["dateOfBirth"] = it }
+
+        val httpResponse = genericRequest(
+            "user",
+            HttpMethod.PUT,
+            bodyParams = bodyParams
+        )
+
+         when (httpResponse.status.value) {
+            200 -> return httpResponse.body<User>()
+
+            else -> throw APIException(httpResponse.body<RemoteError>().message)
+        }
+    }
+
+    suspend fun upadteUserImage (
+        base64: String
+    ): User {
+        val httpResponse = genericRequest(
+            endpoint = "user/image",
+            method = HttpMethod.PUT,
+            bodyParams = mapOf(
+                "base64" to base64
+            )
+        )
+
+        when (httpResponse.status.value) {
+            200 -> return httpResponse.body<User>()
+
+            else -> throw APIException(httpResponse.body<RemoteError>().message)
+        }
+    }
+
+    suspend fun getUser(
         userId: Int
-    ): User? {
+    ): User {
         val httpResponse = genericRequest(
             endpoint = "user/$userId",
             method = HttpMethod.GET
         )
 
-        when(httpResponse.status.value) {
-            200 -> return httpResponse.body() as User
+        when (httpResponse.status.value) {
+            200 -> {
+                return httpResponse.body<User>()
+            }
             else -> {
-                val error = httpResponse.body() as Error
-                Log.d(TAG, "Error ${error.message}")
-                return null
+                throw APIException(httpResponse.body<RemoteError>().message)
             }
         }
     }
-
-
 }

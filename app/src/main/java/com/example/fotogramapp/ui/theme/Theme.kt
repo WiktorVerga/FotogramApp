@@ -24,7 +24,7 @@ private val LightColorScheme = lightColorScheme(
     tertiary = Accent,
     onTertiary = NeutralDark,
     tertiaryContainer = LightGray,
-    onTertiaryContainer = NeutralDark,
+    onTertiaryContainer = NeutralLight,
 
     background = NeutralLight,
     onBackground = NeutralDark,
@@ -53,7 +53,7 @@ private val DarkColorScheme = darkColorScheme(
     tertiary = AccentDark,
     onTertiary = NeutralLight,
     tertiaryContainer = NeutralDark,
-    onTertiaryContainer = LightGray,
+    onTertiaryContainer = NeutralGrey,
 
     background = NeutralDark,
     onBackground = NeutralLight,
