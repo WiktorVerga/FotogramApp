@@ -27,7 +27,7 @@ suspend fun Bitmap?.toBase64(): String? = withContext(Dispatchers.IO) {
     try {
         Log.d("ImageInputViewModel", "Sto prendendo l'immagine da Picker")
         val outputStream = ByteArrayOutputStream()
-        this@toBase64.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        this@toBase64.compress(Bitmap.CompressFormat.PNG, 70, outputStream)
         val byteArray = outputStream.toByteArray()
         Base64.encodeToString(byteArray, Base64.NO_WRAP)
     } catch (e: Exception) {

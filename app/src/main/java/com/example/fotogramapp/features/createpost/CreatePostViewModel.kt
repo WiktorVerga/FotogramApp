@@ -8,6 +8,7 @@ import androidx.navigation.NavController
 import com.example.fotogramapp.data.database.AppDatabase
 import com.example.fotogramapp.data.repository.PostRepository
 import com.example.fotogramapp.data.repository.SettingsRepository
+import com.mapbox.geojson.Point
 import kotlinx.coroutines.launch
 
 class CreatePostViewModel(
@@ -24,7 +25,7 @@ class CreatePostViewModel(
     var image by mutableStateOf<String>("")
         private set
 
-    var location by mutableStateOf("")
+    var location by mutableStateOf<Point?>(null)
         private set
 
     // == Handle Functions ==
@@ -34,6 +35,11 @@ class CreatePostViewModel(
 
     val handleImage: (String) -> Unit = { newImage ->
         image = newImage
+    }
+
+
+    val handleLocation: (Point) -> Unit = { newLocation ->
+        location = newLocation
     }
 
     val handlePublish: () -> Unit = {

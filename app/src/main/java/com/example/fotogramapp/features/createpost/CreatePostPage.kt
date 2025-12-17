@@ -29,6 +29,7 @@ import com.example.fotogramapp.navigation.LocalNavController
 import com.example.fotogramapp.ui.components.buttons.PrimaryButton
 import com.example.fotogramapp.ui.components.inputs.dateinput.DateInput
 import com.example.fotogramapp.ui.components.inputs.imageinput.ImageInput
+import com.example.fotogramapp.ui.components.inputs.locationInput.LocationInput
 import com.example.fotogramapp.ui.components.inputs.textinput.TextInput
 import com.example.fotogramapp.ui.components.title.LargeHeadline
 
@@ -78,6 +79,11 @@ fun CreatePostPage(modifier: Modifier = Modifier) {
             )
 
             //TODO: Map Input
+            LocationInput(
+                id = "location",
+                title = "Pick a Location",
+                getSafeLocation = viewModel.handleLocation
+            )
 
             PrimaryButton(
                 modifier = modifier.padding(vertical = 50.dp),

@@ -31,7 +31,7 @@ class PostRepository(private val database: AppDatabase, private val settingsRepo
         }
     }
 
-    suspend fun addPost(message: String, image: String, location: String?) {
+    suspend fun addPost(message: String, image: String, location: Point?) {
         //TODO: richiesta di rete post, ricevo anche dati per id, authorId
         TODO()
 

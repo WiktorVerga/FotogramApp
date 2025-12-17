@@ -122,4 +122,7 @@ dependencies {
 
     //Image Loading
     implementation("io.coil-kt:coil-compose:2.6.0")
+
+    //Icons
+    implementation("androidx.compose.material:material-icons-extended-android:1.6.8")
 }

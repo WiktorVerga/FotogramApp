@@ -3,9 +3,12 @@ package com.example.testing_apis.model
 import android.util.Log
 import androidx.core.net.toUri
 import com.example.fotogramapp.data.remote.APIException
+import com.example.fotogramapp.data.remote.GeocodingResponse
 import com.example.fotogramapp.data.remote.RemoteError
 import com.example.fotogramapp.data.remote.UserLogged
 import com.example.fotogramapp.domain.model.User
+import com.mapbox.common.BuildConfig
+import com.mapbox.common.R
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -21,6 +24,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.request.parameter
 import kotlinx.serialization.json.Json
 import kotlin.jvm.Throws
 
@@ -176,6 +180,24 @@ class RemoteDataSource(val sessionId: String = "") {
             }
             else -> {
                 throw APIException(httpResponse.body<RemoteError>().message)
+            }
+        }
+    }
+
+    // == Map Box ==
+    suspend fun getAddress(lng: Double, lat: Double, accessToken: String): String? {
+        val response: HttpResponse =
+            client.get("https://api.mapbox.com/geocoding/v5/mapbox.places/$lng,$lat.json") {
+                parameter("access_token", accessToken)
+            }.body()
+
+        when (response.status.value) {
+            200 -> {
+                val address = response.body<GeocodingResponse>().features.firstOrNull()?.place_name
+                return address
+            }
+            else -> {
+                throw APIException(response.body<RemoteError>().message)
             }
         }
     }
