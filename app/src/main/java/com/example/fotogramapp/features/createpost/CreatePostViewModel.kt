@@ -1,22 +1,27 @@
 package com.example.fotogramapp.features.createpost
 
 import android.graphics.Bitmap
+import android.util.Log
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.fotogramapp.data.database.AppDatabase
+import com.example.fotogramapp.data.remote.APIException
 import com.example.fotogramapp.data.repository.PostRepository
 import com.example.fotogramapp.data.repository.SettingsRepository
 import com.mapbox.geojson.Point
+import io.ktor.client.plugins.HttpRequestTimeoutException
 import kotlinx.coroutines.launch
+import okio.IOException
 
 class CreatePostViewModel(
-    navController: NavController,
-    val database: AppDatabase,
-    val settingsRepository: SettingsRepository
+    private val navController: NavController,
+    private val postRepo: PostRepository,
+    private val snackbarHostState: SnackbarHostState
+
 ) : ViewModel() {
-    val postRepo = PostRepository(database, settingsRepository)
 
     // == State ==
     var message by mutableStateOf("")
@@ -43,10 +48,17 @@ class CreatePostViewModel(
     }
 
     val handlePublish: () -> Unit = {
-        //TODO: Aggiungere logica di creazione di un nuovo post
         viewModelScope.launch {
-            postRepo.addPost(message, image, location)
-            navController.popBackStack()
+            try {
+                postRepo.addPost(message, image, location)
+                navController.popBackStack()
+            } catch (e: APIException) {
+                Log.d("CreatePostViewModel", e.message ?: "Unknown Error")
+            } catch (e: IOException) {
+                snackbarHostState.showSnackbar("No Internet Connection")
+            } catch (e: HttpRequestTimeoutException) {
+                snackbarHostState.showSnackbar("Timeout Error")
+            }
         }
     }
 }

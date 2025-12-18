@@ -23,9 +23,17 @@ class DateInputViewModel: ViewModel() {
         selectedDate = date
     }
 
+    fun setInitialDate(initialDate: String) {
+        selectedDate = convertDateToMillis(initialDate)
+    }
+
     fun convertMillisToDate(millis: Long): String {
         val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         return formatter.format(Date(millis))
     }
 
+    fun convertDateToMillis(dateString: String): Long {
+        val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        return formatter.parse(dateString)?.time ?: 0L
+    }
 }

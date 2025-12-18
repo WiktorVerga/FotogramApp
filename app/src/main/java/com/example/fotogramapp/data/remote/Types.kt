@@ -23,6 +23,14 @@ data class UserImageParams(
     @SerialName("base65") val base64: String
 )
 
+// == Post ==
+@Serializable
+data class Location(
+    @SerialName("latitude") val latitude: Double,
+    @SerialName("longitude") val longitude: Double
+)
+
+
 // == MapBox ==
 
 @Serializable

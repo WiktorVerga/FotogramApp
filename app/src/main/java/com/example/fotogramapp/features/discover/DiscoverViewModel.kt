@@ -1,30 +1,65 @@
 package com.example.fotogramapp.features.discover
 
+import android.util.Log
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.fotogramapp.data.database.AppDatabase
+import androidx.navigation.NavController
+import com.example.fotogramapp.data.remote.APIException
 import com.example.fotogramapp.data.repository.PostRepository
-import com.example.fotogramapp.data.repository.SettingsRepository
 import com.example.fotogramapp.data.repository.UserRepository
-import com.example.fotogramapp.domain.model.Post
+import io.ktor.client.network.sockets.ConnectTimeoutException
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class DiscoverViewModel(
-    private val database: AppDatabase,
-    private val settingsRepository: SettingsRepository
+    private val navController: NavController,
+    private val userRepo: UserRepository,
+    private val postRepo: PostRepository
 ) : ViewModel() {
-    private val postRepo = PostRepository(database, settingsRepository)
-    private val userRepo = UserRepository(database, settingsRepository)
-    private val startPagination: Int = 1
-    private val endPagination: Int = 10
 
-    var posts by mutableStateOf(listOf<Post>())
+    // == State ==
+    var postIds by mutableStateOf(listOf<Int>())
         private set
 
-    fun loadPosts() {
+    var isRefreshing by mutableStateOf(false)
+        private set
+
+    // == List Scroll State ==
+    var firstVisibleItemIndex by mutableStateOf(0)
+        private set
+    var firstVisibleItemScrollOffset by mutableStateOf(0)
+        private set
+
+
+    // == Methods ==
+
+    fun loadFeed(maxPostId: Int? = null, limit: Int? = null, seed: Int? = 11) {
         viewModelScope.launch {
-            posts = postRepo.getPosts(startPagination..endPagination)
+            try {
+                postIds += postRepo.getFeed(
+                    maxPostId = maxPostId,
+                    limit = limit,
+                    seed = seed
+                )
+            } catch (e: APIException) {
+                Log.d("DiscoverViewModel", e.message ?: "Unknown Error")
+            } catch (e: ConnectTimeoutException) {
+
+            }
         }
     }
+
+    fun refreshFeed() {
+        if (isRefreshing) return
+
+        viewModelScope.launch {
+            isRefreshing = true
+            postIds = emptyList()
+            delay(1000)
+            loadFeed()
+            isRefreshing = false
+        }
+    }
+
 }

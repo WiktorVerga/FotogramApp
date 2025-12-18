@@ -4,11 +4,12 @@ import android.util.Log
 import androidx.core.net.toUri
 import com.example.fotogramapp.data.remote.APIException
 import com.example.fotogramapp.data.remote.GeocodingResponse
+import com.example.fotogramapp.data.remote.Location
 import com.example.fotogramapp.data.remote.RemoteError
 import com.example.fotogramapp.data.remote.UserLogged
+import com.example.fotogramapp.domain.model.Post
 import com.example.fotogramapp.domain.model.User
-import com.mapbox.common.BuildConfig
-import com.mapbox.common.R
+import com.mapbox.geojson.Point
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -26,7 +27,6 @@ import io.ktor.serialization.kotlinx.json.json
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.request.parameter
 import kotlinx.serialization.json.Json
-import kotlin.jvm.Throws
 
 class RemoteDataSource(val sessionId: String = "") {
 
@@ -91,6 +91,7 @@ class RemoteDataSource(val sessionId: String = "") {
         }
 
         // Make the Request and return the Response
+
         val httpResponse = when (method) {
             HttpMethod.GET -> client.get(completeUrlString, request)
             HttpMethod.POST -> client.post(completeUrlString, request)
@@ -107,9 +108,6 @@ class RemoteDataSource(val sessionId: String = "") {
             endpoint = "user",
             method = HttpMethod.POST
         )
-
-
-
 
         when(httpResponse.status.value) {
             200 -> {
@@ -166,7 +164,7 @@ class RemoteDataSource(val sessionId: String = "") {
         }
     }
 
-    suspend fun getUser(
+    suspend fun fetchUser(
         userId: Int
     ): User {
         val httpResponse = genericRequest(
@@ -184,8 +182,124 @@ class RemoteDataSource(val sessionId: String = "") {
         }
     }
 
+    // == Posts API ==
+    suspend fun createPost(message: String, image: String, location: Point?): Post {
+
+        val bodyParams = mutableMapOf<String, Any>(
+            "contentText" to message,
+            "contentPicture" to image,
+        )
+        location?.let {
+            bodyParams["location"] = Location(it.latitude(), it.longitude())
+        }
+
+        val httpResponse = genericRequest(
+            endpoint = "post",
+            method = HttpMethod.POST,
+            bodyParams = bodyParams
+        )
+
+        when (httpResponse.status.value) {
+            200 -> {
+                return httpResponse.body<Post>()
+            }
+            else -> {
+                throw APIException(httpResponse.body<RemoteError>().message)
+            }
+        }
+    }
+
+    suspend fun fetchPost(postId: Int): Post {
+        val httpResponse = genericRequest(
+            endpoint = "post/$postId",
+            method = HttpMethod.GET
+        )
+
+        Log.d("fetchPost", httpResponse.body<String>())
+
+        when (httpResponse.status.value) {
+            200 -> {
+                return httpResponse.body<Post>()
+            }
+            else -> {
+                throw APIException(httpResponse.body<RemoteError>().message)
+            }
+        }
+    }
+
+    suspend fun deletePost(postId: Int) {
+        val httpResponse = genericRequest(
+            endpoint = "post/$postId",
+            method = HttpMethod.DELETE
+        )
+
+        when (httpResponse.status.value) {
+            204 -> {
+                return
+            }
+            else -> {
+                throw APIException(httpResponse.body<RemoteError>().message)
+            }
+        }
+    }
+
+    suspend fun fetchAuthorPosts(authorId: Int, maxPostId: Int? = null, limit: Int? = null): List<Int> {
+        val queryParams = mutableMapOf<String, Any>()
+        maxPostId?.let {
+            queryParams["maxPostId"] = it
+        }
+        limit?.let {
+            queryParams["limit"] = it
+        }
+
+        val httpResponse = genericRequest(
+            endpoint = "post/list/$authorId",
+            method = HttpMethod.GET,
+            queryParams = queryParams
+        )
+
+        when (httpResponse.status.value) {
+            200 -> {
+                return httpResponse.body<List<Int>>()
+            }
+            else -> {
+                throw APIException(httpResponse.body<RemoteError>().message)
+            }
+        }
+    }
+
+    suspend fun fetchFeed(maxPostId: Int? = null, limit: Int? = null, seed: Int? = null): List<Int> {
+        val queryParams = mutableMapOf<String, Any>()
+        maxPostId?.let {
+            queryParams["maxPostId"] = it
+        }
+        limit?.let {
+            queryParams["limit"] = it
+        }
+        seed?.let {
+            queryParams["seed"] = it
+        }
+
+        val httpResponse = genericRequest(
+            endpoint = "feed",
+            method = HttpMethod.GET,
+            queryParams = queryParams
+        )
+
+        Log.d("fetchPost", httpResponse.body<String>())
+
+        when (httpResponse.status.value) {
+            200 -> {
+                return httpResponse.body<List<Int>>()
+            }
+            else -> {
+                throw APIException(httpResponse.body<RemoteError>().message)
+            }
+        }
+    }
+
     // == Map Box ==
-    suspend fun getAddress(lng: Double, lat: Double, accessToken: String): String? {
+    suspend fun fetchAddress(lng: Double, lat: Double, accessToken: String): String? {
         val response: HttpResponse =
             client.get("https://api.mapbox.com/geocoding/v5/mapbox.places/$lng,$lat.json") {
                 parameter("access_token", accessToken)

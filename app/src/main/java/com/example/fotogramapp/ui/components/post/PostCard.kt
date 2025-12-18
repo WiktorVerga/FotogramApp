@@ -29,29 +29,38 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.fotogramapp.LocalAppDatabase
 import com.example.fotogramapp.LocalDataStore
+import com.example.fotogramapp.LocalPostRepository
+import com.example.fotogramapp.LocalUserRepository
+import com.example.fotogramapp.app.LocalNavController
+import com.example.fotogramapp.app.LocalSnackbar
 import com.example.fotogramapp.domain.model.Post
-import com.example.fotogramapp.navigation.LocalNavController
 import com.example.fotogramapp.ui.components.images.PrimaryImage
 import com.example.fotogramapp.ui.components.post.PostCardViewModel
 import com.example.fotogramapp.ui.theme.CustomIcons
 
 @Composable
-fun PostCard(modifier: Modifier = Modifier, key: String? = null, post: Post) {
+fun PostCard(modifier: Modifier = Modifier, key: String? = null, postId: Int) {
     val navController = LocalNavController.current
-    val db = LocalAppDatabase.current
-    val settingsRepository = LocalDataStore.current
+    val userRepo = LocalUserRepository.current
+    val postRepo = LocalPostRepository.current
+    val snackbarHostState = LocalSnackbar.current
 
     val viewModel: PostCardViewModel = viewModel(
         key = key,
         factory = viewModelFactory {
             initializer {
-                PostCardViewModel(navController, db, settingsRepository)
+                PostCardViewModel(
+                    navController = navController,
+                    userRepo = userRepo,
+                    postRepo = postRepo,
+                    snackbarHostState = snackbarHostState
+                )
             }
         }
     )
 
     LaunchedEffect(Unit) {
-        viewModel.loadPostData(post)
+        viewModel.loadPostData(postId)
     }
 
     Card(

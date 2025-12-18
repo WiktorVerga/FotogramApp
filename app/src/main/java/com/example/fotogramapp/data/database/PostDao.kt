@@ -15,12 +15,14 @@ interface PostDao {
     suspend fun getPostById(id: Int): Post?
 
     @Query("SELECT * FROM Post WHERE id IN (:ids)")
-    suspend fun getPostsByIds(ids: List<Long>): List<Post>?
+    suspend fun getPostsByIds(ids: List<Int>): List<Post?>
+
+    @Query("SELECT id FROM Post WHERE authorId = :authorId")
+    suspend fun getPostsByAuthor(authorId: Int): List<Int>
 
     @Query("DELETE FROM Post WHERE id = :id")
     suspend fun clear(id: Int)
 
     @Query("DELETE FROM Post")
     suspend fun clearAll()
-
 }

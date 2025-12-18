@@ -98,8 +98,10 @@ fun PrimaryImageZoom(
                     ) {
                         if (image != null)
                             Image(
+                                modifier = Modifier.fillMaxSize(),
                                 bitmap = image.asImageBitmap(),
-                                contentDescription = "Fullscreen Image"
+                                contentDescription = "Fullscreen Image",
+                                contentScale = ContentScale.Fit
                             )
                         else {
                             //Placeholder for normal Image

@@ -1,26 +1,34 @@
 package com.example.fotogramapp.ui.components.post
 
 import android.util.Log
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.fotogramapp.data.database.AppDatabase
+import com.example.fotogramapp.data.remote.APIException
 import com.example.fotogramapp.data.repository.PostRepository
 import com.example.fotogramapp.data.repository.SettingsRepository
 import com.example.fotogramapp.data.repository.UserRepository
 import com.example.fotogramapp.domain.model.Post
 import com.example.fotogramapp.navigation.Profile
+import com.mapbox.geojson.Point
 import kotlinx.coroutines.launch
+import okio.IOException
 
 class PostCardViewModel(
     val navController: NavController,
-    private val database: AppDatabase,
-    private val settingsRepository: SettingsRepository
+    private val userRepo: UserRepository,
+    private val postRepo: PostRepository,
+    private val snackbarHostState: SnackbarHostState
 ) : ViewModel() {
-    private val postRepo = PostRepository(database, settingsRepository)
-    private val userRepo = UserRepository(database, settingsRepository)
+
+    // == State ==
+    var loading by mutableStateOf(true)
+        private set
 
     // == Post Data ==
     var creatorUsername by mutableStateOf("")
@@ -37,6 +45,8 @@ class PostCardViewModel(
     var image by mutableStateOf("")
         private set
 
+    var location by mutableStateOf<Point?>(null)
+        private set
     var hasLocation by mutableStateOf(false)
         private set
 
@@ -59,10 +69,31 @@ class PostCardViewModel(
 
     // == Methods ==
 
-    fun loadPostData(post: Post) {
+    fun loadPostData(postId: Int) {
+        viewModelScope.launch {
+            loading = true
 
+            try {
+                val post = postRepo.getPost(postId)
+                val author = userRepo.getUser(post.authorId)
+
+                creatorUsername = author.username
+                creatorPicture = author.profilePicture
+                creatorId = author.id
+                message = post.message
+                image = post.image
+                location = post.location
+                hasLocation = post.location != null
+                isSuggested = !author.isYourFollowing
+                isCurrentUser = userRepo.isLoggedUser(author.id)
+
+                loading = false
+            } catch (e: APIException) {
+                Log.d("PostCardViewModel", e.message ?: "Unknown Error")
+            } catch (e: IOException) {
+                snackbarHostState.showSnackbar("No Internet Connection", duration = SnackbarDuration.Long)
+            }
+
+        }
     }
-
-
-
 }

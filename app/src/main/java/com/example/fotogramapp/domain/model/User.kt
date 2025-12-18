@@ -9,9 +9,9 @@ import kotlinx.serialization.Serializable
 data class User(
     val id: Int,
     val createdAt: String,
-    val username: String,
-    val bio: String,
-    val dateOfBirth: String,
+    val username: String = "Unkown User",
+    val bio: String = "We don't know much about this user",
+    val dateOfBirth: String = "Unknown",
     val profilePicture: String? = null,
     val isYourFollower: Boolean,
     val isYourFollowing: Boolean,

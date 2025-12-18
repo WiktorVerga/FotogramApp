@@ -59,8 +59,9 @@ fun PrimaryImage(modifier: Modifier = Modifier, imageBitmap: Bitmap?, isPfp: Boo
                         .clip(CircleShape)
                 )
             } else {
-                //Show normal Image, with 1:1 ration
+                //Show normal Image, with 1:1 ratio
                 Image(
+                    modifier = Modifier.fillMaxSize(),
                     bitmap = imageBitmap.asImageBitmap(),
                     contentDescription = "Image",
                     contentScale = ContentScale.Crop,
@@ -72,7 +73,7 @@ fun PrimaryImage(modifier: Modifier = Modifier, imageBitmap: Bitmap?, isPfp: Boo
                 Image(
                     painter = painterResource(id = R.drawable.user_placeholder),
                     contentDescription = "Profile Picture Placeholder",
-                    contentScale = ContentScale.Fit,
+                    contentScale = ContentScale.FillBounds,
                     modifier = Modifier
                         .size(80.dp)
                         .clip(CircleShape)

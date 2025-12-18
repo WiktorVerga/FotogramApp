@@ -7,7 +7,7 @@ import androidx.room.TypeConverters
 import com.example.fotogramapp.domain.model.Post
 import com.example.fotogramapp.domain.model.User
 
-@Database(entities = [Post::class], version = 6)
+@Database(entities = [Post::class], version = 1)
 @TypeConverters(Converters::class)
 abstract class AppDatabase: RoomDatabase() {
     abstract fun postDao(): PostDao

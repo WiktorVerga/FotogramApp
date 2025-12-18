@@ -93,12 +93,12 @@ dependencies {
     implementation("io.ktor:ktor-client-content-negotiation")
     implementation("io.ktor:ktor-serialization-kotlinx-json")
 
+    //Map and Location
     implementation("com.mapbox.maps:android-ndk27:11.16.6")
-    // if your app does not require 16 KB page size support, the default dependency without -ndk27 can be used
-    // implementation("com.mapbox.maps:android:11.16.6")
-
-    // If you're using compose also add the compose extension
     implementation("com.mapbox.extension:maps-compose-ndk27:11.16.6")
+
+    implementation("com.google.android.gms:play-services-location:21.3.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.9.0")
 
 
     // == Navigation ==

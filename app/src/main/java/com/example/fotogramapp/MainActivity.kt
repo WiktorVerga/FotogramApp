@@ -14,7 +14,9 @@ import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import com.example.fotogramapp.app.FotogramApp
 import com.example.fotogramapp.data.database.AppDatabase
+import com.example.fotogramapp.data.repository.PostRepository
 import com.example.fotogramapp.data.repository.SettingsRepository
+import com.example.fotogramapp.data.repository.UserRepository
 import com.example.fotogramapp.ui.theme.FotogramTheme
 
 //DataStore
@@ -27,13 +29,21 @@ val LocalDataStore = staticCompositionLocalOf<SettingsRepository> {
     error("LocalAppDatabase not provided")
 }
 
+val LocalUserRepository = staticCompositionLocalOf<UserRepository> {
+    error("LocalUserRepository not provided")
+}
+
+val LocalPostRepository = staticCompositionLocalOf<PostRepository> {
+    error("LocalUserRepository not provided")
+}
+
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val settingsDataStore = applicationContext.dataStore
         val settingsRepository = SettingsRepository(settingsDataStore)
-
 
         enableEdgeToEdge()
         setContent {
@@ -47,10 +57,14 @@ class MainActivity : ComponentActivity() {
                     .build()
             }
 
+            val userRepo = UserRepository(settingsRepository)
+            val postRepo = PostRepository(db, settingsRepository)
+
             CompositionLocalProvider(
                 LocalAppDatabase provides db,
-                LocalDataStore provides settingsRepository
-
+                LocalDataStore provides settingsRepository,
+                LocalUserRepository provides userRepo,
+                LocalPostRepository provides postRepo
             ) {
                 FotogramTheme() {
                     FotogramApp()

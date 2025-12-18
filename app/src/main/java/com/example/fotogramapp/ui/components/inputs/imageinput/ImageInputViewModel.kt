@@ -13,6 +13,7 @@ import androidx.core.graphics.scale
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fotogramapp.data.utils.toBase64
+import com.example.fotogramapp.data.utils.toBitmap
 import kotlinx.coroutines.launch
 import okio.utf8Size
 
@@ -70,5 +71,9 @@ class ImageInputViewModel : ViewModel() {
     fun removeInsert() {
         imageUri = null
         bitmap = null
+    }
+
+    fun setInitialImage(initialImage: String) {
+        bitmap = initialImage.toBitmap()
     }
 }

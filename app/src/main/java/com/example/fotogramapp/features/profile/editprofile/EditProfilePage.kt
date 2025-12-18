@@ -1,52 +1,46 @@
-package com.example.fotogramapp.features.signup
+package com.example.fotogramapp.features.profile.editprofile
 
-import android.util.Log
-import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.fotogramapp.LocalDataStore
 import com.example.fotogramapp.LocalUserRepository
 import com.example.fotogramapp.app.LocalNavController
 import com.example.fotogramapp.app.LocalSnackbar
-import com.example.fotogramapp.data.database.AppDatabase
-import com.example.fotogramapp.data.repository.SettingsRepository
+import com.example.fotogramapp.domain.model.User
 import com.example.fotogramapp.ui.components.buttons.PrimaryButton
 import com.example.fotogramapp.ui.components.inputs.dateinput.DateInput
 import com.example.fotogramapp.ui.components.inputs.imageinput.ImageInput
 import com.example.fotogramapp.ui.components.inputs.textinput.TextInput
+import com.example.fotogramapp.ui.components.title.LargeHeadline
 
 @Composable
-fun SignupPage(modifier: Modifier = Modifier) {
-
-    val navController = LocalNavController.current
+fun EditProfilePage(modifier: Modifier = Modifier, username: String, biography: String, dob: String, image: String) {
+    val snackBarHostState = LocalSnackbar.current
     val userRepo = LocalUserRepository.current
-    val snackbarHostState = LocalSnackbar.current
+    val navController = LocalNavController.current
 
-    val viewModel: SignupViewModel = viewModel(
+    val viewModel: EditProfileViewModel = viewModel(
         factory = viewModelFactory {
             initializer {
-                SignupViewModel(
-                    navController = navController,
+                EditProfileViewModel(
+                    snackBarHostState = snackBarHostState,
                     userRepo = userRepo,
-                    snackBarHostState = snackbarHostState
+                    navController = navController
                 )
             }
         }
@@ -64,51 +58,46 @@ fun SignupPage(modifier: Modifier = Modifier) {
             verticalArrangement = Arrangement.spacedBy(30.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
 
-        ) {
-            Text(
-                text = "Sign Up",
-                modifier = modifier
-                    .fillMaxWidth()
-                    .padding(top = 60.dp, bottom = 40.dp),
-                style = MaterialTheme.typography.headlineLarge,
-                fontSize = 40.sp,
-                fontWeight = FontWeight.ExtraBold,
-                textAlign = TextAlign.Center,
-            )
+            ) {
+            LargeHeadline("Edit your Profile")
 
             TextInput(
-                id = "username",
+                id = "edit-username",
                 title = "Username",
                 label = "Max size: 15 Characters",
                 maxSize = 15,
-                getSafeValue = viewModel.handleUsername
+                getSafeValue = viewModel.handleUsername,
+                initialText = username
             )
 
             TextInput(
-                id = "Biography",
+                id = "edit-Biography",
                 title = "Biography",
                 label = "Max size: 100 Characters",
                 maxSize = 100,
-                getSafeValue = viewModel.handleBiography
+                getSafeValue = viewModel.handleBiography,
+                initialText = biography
             )
 
             DateInput(
-                id = "birth_date",
+                id = "edit-birth_date",
                 title = "Date of Birth",
-                getStringeDate = viewModel.handleDob
+                getStringeDate = viewModel.handleDob,
+                initialDate = dob
             )
 
             ImageInput(
-                id = "pfp",
+                id = "edit-pfp",
                 title = "Profile Picture",
                 getBase64Image = viewModel.handleImage,
-                isPfp = true
+                isPfp = true,
+                initialImage = image
             )
 
             PrimaryButton(
                 modifier = modifier.padding(vertical = 50.dp),
-                text = "Sign Up",
-                onClick = viewModel.handleSignup
+                text = "Save Changes",
+                onClick = viewModel.handleSave
             )
         }
     }

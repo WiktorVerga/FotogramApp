@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.fotogramapp.data.remote.APIException
 import com.example.fotogramapp.data.repository.SettingsRepository
+import com.example.fotogramapp.data.repository.UserRepository
 import com.example.fotogramapp.domain.model.User
 import com.example.fotogramapp.navigation.Discover
 import com.example.testing_apis.model.RemoteDataSource
@@ -14,7 +15,7 @@ import kotlinx.coroutines.launch
 
 class SignupViewModel(
     private val navController: NavController,
-    private val settingsRepository: SettingsRepository,
+    private val userRepo: UserRepository,
     private val snackBarHostState: SnackbarHostState
 ) : ViewModel() {
 
@@ -50,42 +51,26 @@ class SignupViewModel(
     }
 
     val handleSignup: () -> Unit = {
-        var remoteDataSource = RemoteDataSource()
 
         if (username != "" && biography != "" && dob != "" && image != "") {
             viewModelScope.launch {
 
-                //Chiamata di rete
+                //Registrazione dell'Utente
                 try {
-                    var (userId, sessionId) = remoteDataSource.signUpUser()
 
-                    //Fornisco il sessionId al remoteDataSource
-                    remoteDataSource.provideSessionId(sessionId)
+                    val (userId, sessionId) = userRepo.userSignup(username, biography, dob, image)
 
-                    //Aggiorno l'utente creato con i dati inseriti dall'utente
-                    remoteDataSource.updateUserDetails(
-                        username = username,
-                        bio = biography,
-                        dob = dob
-                    )
-
-                    //Aggiungo l'immagine profilo
-                    remoteDataSource.upadteUserImage(
-                        base64 = image
-                    )
-
-                    settingsRepository.setLoggedUser(userId, sessionId)
+                    userRepo.setLoggedUser(userId, sessionId)
                     navController.navigate(Discover)
-                    snackBarHostState.showSnackbar("Registrazione Eseguita")
 
                 } catch (error: APIException) {
-                    //Cattura di qualsiasi errore di rete
+                    //Cattura di qualsiasi errore della userSignup
                     error.message?.let { snackBarHostState.showSnackbar(it) }
                 }
             }
         } else {
             viewModelScope.launch {
-                snackBarHostState.showSnackbar("Compilare tutti i campi")
+                snackBarHostState.showSnackbar("Please fill out all fields")
             }
         }
     }

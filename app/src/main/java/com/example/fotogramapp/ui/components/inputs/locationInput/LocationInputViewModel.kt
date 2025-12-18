@@ -33,6 +33,7 @@ class LocationInputViewModel(
 
     val handleGetLocation: (Point) -> Unit = {
         location = it
+        locationToAddress(it)
     }
 
     fun locationToAddress(point: Point) {

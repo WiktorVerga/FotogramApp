@@ -39,4 +39,8 @@ class TextInputViewModel : ViewModel() {
             getValidText(text)
         }
     }
+
+    fun setInitialText(initialText: String) {
+        this.text = initialText
+    }
 }

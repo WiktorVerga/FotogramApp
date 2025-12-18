@@ -14,6 +14,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.fotogramapp.navigation.CreatePost
 import com.example.fotogramapp.navigation.Discover
+import com.example.fotogramapp.navigation.EditProfile
 import com.example.fotogramapp.navigation.MapPage
 import com.example.fotogramapp.navigation.Profile
 import com.example.fotogramapp.navigation.SignUp
@@ -35,7 +36,8 @@ fun TopBar(modifier: Modifier = Modifier, navController: NavController) {
         currentDestination.isRoute<Profile>() -> "Profile"
         currentDestination.isRoute<MapPage>() -> "Posts Map"
         currentDestination.isRoute<CreatePost>() -> "Create Post"
-        currentDestination.isRoute<SignUp>() -> "Create Account"
+        currentDestination.isRoute<SignUp>() -> "Create Profile"
+        currentDestination.isRoute<EditProfile>() -> "Edit Profile"
         else -> "Page Not Found"
     }
 

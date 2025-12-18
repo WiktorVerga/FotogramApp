@@ -32,7 +32,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.fotogramapp.LocalAppDatabase
 import com.example.fotogramapp.LocalDataStore
+import com.example.fotogramapp.LocalPostRepository
+import com.example.fotogramapp.LocalUserRepository
 import com.example.fotogramapp.app.LocalNavController
+import com.example.fotogramapp.app.LocalSnackbar
 import com.example.fotogramapp.data.database.AppDatabase
 import com.example.fotogramapp.data.repository.PostRepository
 import com.example.fotogramapp.data.repository.SettingsRepository
@@ -53,13 +56,21 @@ import kotlinx.coroutines.launch
 @Composable
 fun ProfilePage(modifier: Modifier = Modifier, userId: Int) {
 
-    val settingsRepository = LocalDataStore.current
-    val db = LocalAppDatabase.current
+    val userRepo = LocalUserRepository.current
+    val postRepo = LocalPostRepository.current
+    val navController = LocalNavController.current
+    val snackbarHostState = LocalSnackbar.current
+
     val viewModel: ProfileViewModel = viewModel(
         factory =
             viewModelFactory {
                 initializer {
-                    ProfileViewModel(settingsRepository = settingsRepository, database = db)
+                    ProfileViewModel(
+                        userRepo = userRepo,
+                        postRepo = postRepo,
+                        navController = navController,
+                        snackbarHostState = snackbarHostState
+                    )
                 }
             }
     )
@@ -129,9 +140,7 @@ fun ProfilePage(modifier: Modifier = Modifier, userId: Int) {
 
                 // == Follow / Edit Button ==
                 if (viewModel.isCurrentUser) {
-                    PrimaryButton(text = "Edit Profile", onClick = {
-                        //TODO: aggiungi azione bottone e condizione per currentUser
-                    })
+                    PrimaryButton(text = "Edit Profile", onClick = viewModel.handleEditProfile)
                 } else {
                     FollowButton(
                         isFollowing = viewModel.isFollowing,
@@ -143,10 +152,10 @@ fun ProfilePage(modifier: Modifier = Modifier, userId: Int) {
                 LargeHeadline("Posts \uD83C\uDF1F")
             }
 
-
             // == Posts ==
-            itemsIndexed(viewModel.posts) { index, post ->
-                PostCard(key = index.toString(), post = post)
+            //TODO: aggiungi logica di infinite scrolling (possibilmente mettendolo in un componente a parte)
+            itemsIndexed(viewModel.posts) { index, postId ->
+                PostCard(key = index.toString(), postId = postId)
             }
 
             // == End Spacer ==

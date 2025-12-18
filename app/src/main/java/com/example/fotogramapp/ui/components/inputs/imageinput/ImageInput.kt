@@ -53,7 +53,8 @@ fun ImageInput(
     id: String,
     title: String = "Title",
     getBase64Image: (String) -> Unit,
-    isPfp: Boolean = false
+    isPfp: Boolean = false,
+    initialImage: String? = null
 ) {
 
     val viewModel: ImageInputViewModel = viewModel(key = id)
@@ -66,6 +67,12 @@ fun ImageInput(
 
         viewModel.getImageFromPicker(uri, context, getBase64Image)
 
+    }
+
+    LaunchedEffect(Unit) {
+        if (initialImage != null) {
+            viewModel.setInitialImage(initialImage)
+        }
     }
 
     Box(
@@ -117,7 +124,7 @@ fun ImageInput(
                 val bitmapPicked = viewModel.bitmap
                 val imageUri = viewModel.imageUri
 
-                if (imageUri != null) {
+                if (imageUri != null || initialImage != null) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth(),

@@ -20,11 +20,9 @@ import com.example.fotogramapp.data.repository.SettingsRepository
 import com.example.fotogramapp.features.createpost.CreatePostPage
 import com.example.fotogramapp.features.discover.DiscoverPage
 import com.example.fotogramapp.features.profile.ProfilePage
+import com.example.fotogramapp.features.profile.editprofile.EditProfilePage
 import com.example.fotogramapp.features.signup.SignupPage
 
-val LocalNavController = staticCompositionLocalOf<NavController> {
-    error("LocalNavController not provided")
-}
 @Composable
 fun Navigator(
     modifier: Modifier = Modifier,
@@ -61,6 +59,16 @@ fun Navigator(
                 ProfilePage(userId = args.id)
             }
 
+        }
+        composable<EditProfile> {
+            val args = it.toRoute<EditProfile>()
+
+            EditProfilePage(
+                username = args.username,
+                biography = args.biography,
+                dob = args.dob,
+                image = args.image
+            )
         }
         composable<CreatePost> {
             CreatePostPage()

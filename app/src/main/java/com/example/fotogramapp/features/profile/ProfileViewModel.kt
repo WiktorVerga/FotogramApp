@@ -1,23 +1,29 @@
 package com.example.fotogramapp.features.profile
 
 import android.util.Log
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import com.example.fotogramapp.data.database.AppDatabase
 import com.example.fotogramapp.data.remote.APIException
 import com.example.fotogramapp.data.repository.PostRepository
 import com.example.fotogramapp.data.repository.SettingsRepository
 import com.example.fotogramapp.data.repository.UserRepository
 import com.example.fotogramapp.domain.model.Post
+import com.example.fotogramapp.domain.model.User
+import com.example.fotogramapp.navigation.EditProfile
 import kotlinx.coroutines.launch
+import okio.IOException
 
 class ProfileViewModel(
-    private val settingsRepository: SettingsRepository,
-    private val database: AppDatabase
+    private val userRepo: UserRepository,
+    private val postRepo: PostRepository,
+    private val navController: NavController,
+    private val snackbarHostState: SnackbarHostState
 ) : ViewModel() {
-    private val userRepo = UserRepository(database, settingsRepository)
-    private val postRepo = PostRepository(database, settingsRepository)
 
     // == State ==
     var loading by mutableStateOf(true)
@@ -25,14 +31,17 @@ class ProfileViewModel(
 
 
     // == User Data ==
-    var id by mutableStateOf<Int?>(null)
+
+    var id by mutableStateOf(0)
+        private set
+
     var username by mutableStateOf("")
         private set
 
     var biography by mutableStateOf("")
         private set
 
-    var profilePicture: String? by mutableStateOf("")
+    var profilePicture by mutableStateOf("")
         private set
 
     var followersCount by mutableStateOf(0)
@@ -44,7 +53,7 @@ class ProfileViewModel(
     var postCount by mutableStateOf(0)
         private set
 
-    var posts by mutableStateOf(listOf<Post>())
+    var posts by mutableStateOf(listOf<Int>())
         private set
 
     var dob by mutableStateOf("")
@@ -61,24 +70,20 @@ class ProfileViewModel(
 
 
         if (isFollowing) {
-            //TODO: chiamata di rete per fare unfollow, gestita da model?
+            //TODO: chiamata di rete per fare unfollow, gestita da model
             Log.d("ProfileViewModel", "Sto togliendo il Follow")
             viewModelScope.launch {
-                id?.let {
-                    userRepo.unFollowUser(it)
-                    loadUserData(it)
-                }
+
+                userRepo.unFollowUser(id)
+                loadUserData(id)
 
             }
         } else {
-            //TODO: chiamata di rete per fare follow, gestita da model?
+            //TODO: chiamata di rete per fare follow, gestita da userRepository
             Log.d("ProfileViewModel", "Sto mettendo il Follow")
             viewModelScope.launch {
-                id?.let {
-                    userRepo.followUser(it)
-                    loadUserData(it)
-                }
-
+                userRepo.followUser(id)
+                loadUserData(id)
             }
         }
 
@@ -87,8 +92,13 @@ class ProfileViewModel(
 
 
 
-    val handleEditProfile = {
-
+    val handleEditProfile: () -> Unit = {
+        navController.navigate(EditProfile(
+            username = username,
+            biography = biography,
+            dob = dob,
+            image = profilePicture
+        ))
     }
 
 
@@ -104,24 +114,35 @@ class ProfileViewModel(
                 id = user.id
                 username = user.username
                 biography = user.bio
-                profilePicture = user.profilePicture
+                profilePicture = user.profilePicture ?: ""
                 followersCount = user.followersCount
                 followingCount = user.followingCount
                 dob = user.dateOfBirth
                 postCount = user.postsCount
 
-
                 isCurrentUser = userRepo.isLoggedUser(userId)
-                Log.d("ProfileViewModel", "isCurrentUser: $isCurrentUser")
 
                 if (!isCurrentUser) {
-                    Log.d("ProfileViewModel", "isFollowing: ${user.isYourFollowing}")
                     isFollowing = user.isYourFollowing
                 }
+
+                loadPosts(user.id)
+
+                loading = false
             } catch (error: APIException) {
                 error.message?.let { Log.d("ProfileViewModel", it) }
+                snackbarHostState.showSnackbar("Network Error")
+            } catch (e: IOException) {
+                snackbarHostState.showSnackbar("No Internet Connection", duration = SnackbarDuration.Long)
+                //Riprovo la chiamata
+                loadUserData(userId)
             }
-            loading = false
+        }
+    }
+
+    fun loadPosts(userId: Int) {
+        viewModelScope.launch {
+            posts += postRepo.getAuthorPosts(userId)
         }
     }
 }

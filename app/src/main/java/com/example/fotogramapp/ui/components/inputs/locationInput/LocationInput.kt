@@ -101,8 +101,7 @@ fun LocationInput(
             if (addressPicked != null) {
                 Text(
                     text = addressPicked,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = Color.Gray
+                    style = MaterialTheme.typography.bodyLarge
                 )
             }
 

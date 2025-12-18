@@ -16,9 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.fotogramapp.data.database.AppDatabase
-import com.example.fotogramapp.data.repository.SettingsRepository
-import com.example.fotogramapp.navigation.LocalNavController
 import com.example.fotogramapp.navigation.Navigator
 import com.example.fotogramapp.ui.components.navbar.Navbar
 import com.example.fotogramapp.ui.components.topbar.TopBar

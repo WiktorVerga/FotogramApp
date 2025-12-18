@@ -24,8 +24,10 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavController
 import com.example.fotogramapp.LocalAppDatabase
 import com.example.fotogramapp.LocalDataStore
+import com.example.fotogramapp.LocalPostRepository
+import com.example.fotogramapp.app.LocalNavController
+import com.example.fotogramapp.app.LocalSnackbar
 import com.example.fotogramapp.features.signup.SignupViewModel
-import com.example.fotogramapp.navigation.LocalNavController
 import com.example.fotogramapp.ui.components.buttons.PrimaryButton
 import com.example.fotogramapp.ui.components.inputs.dateinput.DateInput
 import com.example.fotogramapp.ui.components.inputs.imageinput.ImageInput
@@ -35,15 +37,19 @@ import com.example.fotogramapp.ui.components.title.LargeHeadline
 
 @Composable
 fun CreatePostPage(modifier: Modifier = Modifier) {
-    val database = LocalAppDatabase.current
-    val settingsRepository = LocalDataStore.current
     val navController = LocalNavController.current
+    val postRepository = LocalPostRepository.current
+    val snackbarHostState = LocalSnackbar.current
 
 
     val viewModel: CreatePostViewModel = viewModel(
         factory = viewModelFactory {
             initializer {
-                CreatePostViewModel(navController, database, settingsRepository)
+                CreatePostViewModel(
+                    navController = navController,
+                    postRepo = postRepository,
+                    snackbarHostState = snackbarHostState
+                )
             }
         }
     )
