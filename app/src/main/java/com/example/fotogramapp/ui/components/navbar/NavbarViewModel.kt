@@ -13,6 +13,7 @@ class NavbarViewModel(
     private val navController: NavController
 ) : ViewModel() {
 
+    // == Handle Functions ==
     fun handleProfileNav() {
         viewModelScope.launch {
             val loggedUserId = settingsRepository.getLoggedUserId()

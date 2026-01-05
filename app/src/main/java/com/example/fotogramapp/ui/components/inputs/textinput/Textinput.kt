@@ -29,14 +29,16 @@ fun TextInput(
     initialText: String? = null
 ) {
 
-    //Quando uso viewmodel mi si collegano le singole istanze?
     val viewModel: TextInputViewModel = viewModel(key = id)
 
+    // == Launched Effects ==
     LaunchedEffect(Unit) {
         if (initialText != null) {
             viewModel.setInitialText(initialText)
         }
     }
+
+
     Box(
         modifier = modifier
             .fillMaxWidth()

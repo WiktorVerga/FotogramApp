@@ -33,6 +33,7 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.window.DialogProperties
 import com.example.fotogramapp.data.repository.LocationException
 import com.example.fotogramapp.data.repository.MapRepository
 import com.mapbox.common.location.Location
@@ -47,6 +48,7 @@ fun LocationPicker(
     getLocation: (Point) -> Unit
 ) {
 
+    // == State ==
     val mapRepo = MapRepository()
 
     var hasPermission by remember { mutableStateOf(false) }
@@ -72,6 +74,7 @@ fun LocationPicker(
         }
     }
 
+    // == Launched Effects ==
     LaunchedEffect(Unit) {
         hasPermission = mapRepo.checkLocationPermission(context)
         if (!hasPermission) {
@@ -79,6 +82,7 @@ fun LocationPicker(
         }
     }
 
+    //Centers map on User Location (if has Permissions)
     LaunchedEffect(hasPermission) {
         try {
             startLocation = mapRepo.getCurrentLocation(context)
@@ -92,47 +96,47 @@ fun LocationPicker(
 
     Dialog(
         onDismissRequest = onDismiss,
+        properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
-        Column {
-            Box(
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(15.dp))
+                .height(600.dp)
+        ) {
+
+            // == Map ==
+            MapboxMap(
+                mapViewportState = mapViewportState
+            )
+
+            // == Marker on center of map ==
+            Icon(
+                imageVector = Icons.Default.LocationOn,
+                contentDescription = "Center marker",
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(600.dp)
+                    .align(Alignment.Center)
+                    .size(48.dp)
+                    .offset(y = (-24).dp),
+                tint = Color.Red
+            )
+
+            // == Save Location Button ==
+            Button(
+                onClick = {
+                    selectedLocation = mapViewportState.cameraState?.center
+                    selectedLocation?.let {
+                        getLocation(selectedLocation!!)
+                        onDismiss()
+                    }
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(16.dp)
             ) {
-
-                MapboxMap(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    mapViewportState = mapViewportState
-                )
-
                 Icon(
-                    imageVector = Icons.Default.LocationOn,
-                    contentDescription = "Center marker",
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .size(48.dp)
-                        .offset(y = (-24).dp),
-                    tint = Color.Red
+                    imageVector = Icons.Default.Check,
+                    contentDescription = "Save location"
                 )
-
-                Button(
-                    onClick = {
-                        selectedLocation = mapViewportState.cameraState?.center
-                        selectedLocation?.let {
-                            getLocation(selectedLocation!!)
-                            onDismiss()
-                        }
-                    },
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(16.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Check,
-                        contentDescription = "Save location"
-                    )
-                }
             }
         }
     }

@@ -15,8 +15,11 @@ import com.example.fotogramapp.data.repository.UserRepository
 import com.example.fotogramapp.domain.model.Post
 import com.example.fotogramapp.domain.model.User
 import com.example.fotogramapp.navigation.EditProfile
+import io.ktor.client.network.sockets.ConnectTimeoutException
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okio.IOException
+import kotlin.collections.plus
 
 class ProfileViewModel(
     private val userRepo: UserRepository,
@@ -27,6 +30,15 @@ class ProfileViewModel(
 
     // == State ==
     var loading by mutableStateOf(true)
+        private set
+
+    var offline by mutableStateOf(false)
+        private set
+
+    var offlinePosts by mutableStateOf(false)
+        private set
+
+    var maxPostId by mutableStateOf<Int?>(null)
         private set
 
 
@@ -66,31 +78,32 @@ class ProfileViewModel(
         private set
 
     // == Handle Functions ==
-    val handleFollowToggle = {
+    val handleFollowToggle: () -> Unit = {
+        viewModelScope.launch {
+            try {
 
+                if (isFollowing) {
+                    userRepo.unFollowUser(id)
+                    loadUserData(id)
+                } else {
+                    userRepo.followUser(id)
+                    loadUserData(id)
+                }
 
-        if (isFollowing) {
-            //TODO: chiamata di rete per fare unfollow, gestita da model
-            Log.d("ProfileViewModel", "Sto togliendo il Follow")
-            viewModelScope.launch {
+                isFollowing = !isFollowing
 
-                userRepo.unFollowUser(id)
-                loadUserData(id)
-
+            } catch (e: APIException) {
+                Log.d("ProfileViewModel", e.message ?: "Unknown Error")
+            } catch (e: ConnectTimeoutException) {
+                snackbarHostState.showSnackbar("Request Timeout", duration = SnackbarDuration.Long)
+            } catch (e: IOException) {
+                snackbarHostState.showSnackbar("No Internet Connection", duration = SnackbarDuration.Long)
             }
-        } else {
-            //TODO: chiamata di rete per fare follow, gestita da userRepository
-            Log.d("ProfileViewModel", "Sto mettendo il Follow")
-            viewModelScope.launch {
-                userRepo.followUser(id)
-                loadUserData(id)
-            }
+
         }
 
-        isFollowing = !isFollowing
+
     }
-
-
 
     val handleEditProfile: () -> Unit = {
         navController.navigate(EditProfile(
@@ -128,21 +141,36 @@ class ProfileViewModel(
 
                 loadPosts(user.id)
 
+                offline = false
                 loading = false
             } catch (error: APIException) {
                 error.message?.let { Log.d("ProfileViewModel", it) }
                 snackbarHostState.showSnackbar("Network Error")
             } catch (e: IOException) {
-                snackbarHostState.showSnackbar("No Internet Connection", duration = SnackbarDuration.Long)
-                //Riprovo la chiamata
-                loadUserData(userId)
+                offline = true
+                delay(500)
+                loading = false
             }
         }
     }
 
+    fun saveMaxPostId(maxPostId: Int) {
+        this.maxPostId = maxPostId
+    }
+
     fun loadPosts(userId: Int) {
         viewModelScope.launch {
-            posts += postRepo.getAuthorPosts(userId)
+            try {
+
+                posts += postRepo.getAuthorPosts(userId, maxPostId)
+                offlinePosts = false
+            } catch (e: APIException) {
+                Log.d("ProfileViewModel", e.message ?: "Unknown Error")
+            } catch (e: ConnectTimeoutException) {
+                snackbarHostState.showSnackbar("Request Timeout")
+            } catch (e: IOException) {
+                offlinePosts = true
+            }
         }
     }
 }

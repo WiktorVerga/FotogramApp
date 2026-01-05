@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.example.fotogramapp.ui.theme.FotogramTheme
 import java.util.Locale
 
+//Generic App Button
 @Composable
 fun PrimaryButton(modifier: Modifier = Modifier, text: String, onClick: () -> Unit) {
     Button(
@@ -30,13 +31,5 @@ fun PrimaryButton(modifier: Modifier = Modifier, text: String, onClick: () -> Un
             text = text.uppercase(Locale.ROOT),
             style = MaterialTheme.typography.labelLarge
         )
-    }
-}
-
-@Preview
-@Composable
-private fun PrimaryButtonPrev() {
-    FotogramTheme {
-        PrimaryButton(text = "Primary Button", onClick = {})
     }
 }

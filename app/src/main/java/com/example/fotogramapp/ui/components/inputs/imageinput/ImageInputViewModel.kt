@@ -35,7 +35,6 @@ class ImageInputViewModel : ViewModel() {
 
 
     // == Methods ==
-
     fun getImageFromPicker(uri: Uri?, context: Context, getBase64Image: (String) -> Unit) {
         viewModelScope.launch {
             loading = true
@@ -47,6 +46,14 @@ class ImageInputViewModel : ViewModel() {
                     .createSource(context.contentResolver,it)
                 bitmap = ImageDecoder.decodeBitmap(source)
             }
+
+
+            val compressBitmap = bitmap
+            compressBitmap?.let {
+                val scale = minOf(300f / compressBitmap.width, 300f / compressBitmap.height)
+                bitmap = compressBitmap.scale((compressBitmap.width * scale).toInt(), (compressBitmap.height * scale).toInt())
+            }
+
 
             val base64Image = bitmap.toBase64()
 

@@ -31,6 +31,7 @@ import com.example.fotogramapp.ui.components.images.PrimaryImage
 import com.example.fotogramapp.ui.theme.CustomIcons
 import com.example.fotogramapp.ui.theme.shimmerEffect
 import com.mapbox.geojson.Point
+import androidx.compose.ui.res.stringResource
 
 @Composable
 fun LocationInput(
@@ -39,10 +40,7 @@ fun LocationInput(
     title: String = "Title",
     getSafeLocation: (Point) -> Unit
 ) {
-
-    val context = LocalContext.current
-
-    val accessToken = context.getString(R.string.mapbox_access_token)
+    val accessToken = stringResource(R.string.mapbox_access_token)
     val viewModel: LocationInputViewModel = viewModel(
         key = id,
         factory = viewModelFactory {
@@ -52,6 +50,7 @@ fun LocationInput(
         }
     )
 
+    // == Launch Effects ==
     LaunchedEffect(viewModel.location) {
         val safeLocation = viewModel.location
         if (safeLocation != null) {
@@ -78,10 +77,14 @@ fun LocationInput(
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.ExtraBold
             )
+            Text(
+                "*Optional",
+                style = MaterialTheme.typography.labelSmall,
+            )
 
+            // == Open Dialog with Map ==
             TextButton(
                 onClick = {
-                    //Open Dialog with map
                     viewModel.showLocationPicker()
                 },
                 modifier = modifier
@@ -96,6 +99,7 @@ fun LocationInput(
                 )
             }
 
+            // == Show Picked Location ==
             val addressPicked: String? = viewModel.address
 
             if (addressPicked != null) {
@@ -108,6 +112,7 @@ fun LocationInput(
         }
     }
 
+    // == Loaction Picker ==
     if (viewModel.showLocationPicker) {
         LocationPicker(
             onDismiss = { viewModel.handleDismiss() },

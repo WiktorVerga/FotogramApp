@@ -3,6 +3,7 @@ package com.example.fotogramapp.data.repository
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.util.Log
 import androidx.core.content.ContextCompat
 import com.example.fotogramapp.data.remote.APIException
@@ -54,3 +55,10 @@ class MapRepository {
 }
 
 class LocationException(message: String) : Exception(message)
+
+// Type for Map Marker
+data class PostLocation(
+    val coordinate: Point,
+    val name: String,
+    val image: String
+)

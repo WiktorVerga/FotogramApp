@@ -19,9 +19,11 @@ import com.example.fotogramapp.data.database.AppDatabase
 import com.example.fotogramapp.data.repository.SettingsRepository
 import com.example.fotogramapp.features.createpost.CreatePostPage
 import com.example.fotogramapp.features.discover.DiscoverPage
+import com.example.fotogramapp.features.map.MapPage
 import com.example.fotogramapp.features.profile.ProfilePage
 import com.example.fotogramapp.features.profile.editprofile.EditProfilePage
 import com.example.fotogramapp.features.signup.SignupPage
+import com.mapbox.geojson.Point
 
 @Composable
 fun Navigator(
@@ -29,6 +31,7 @@ fun Navigator(
     navController: NavHostController,
 ) {
     val settingsRepository = LocalDataStore.current
+
     val viewModel: NavigatorViewModel = viewModel(
         factory = viewModelFactory {
             initializer {
@@ -37,11 +40,13 @@ fun Navigator(
         }
     )
 
+    // == Launched Effects ==
     LaunchedEffect(Unit) {
         //Check if it's First Access
         viewModel.checkFirstAccess()
     }
 
+    // == Navigation Logic ==
     NavHost(
         navController = navController,
         startDestination = if (viewModel.isFirstAccess) SignUp else Discover,
@@ -74,8 +79,13 @@ fun Navigator(
             CreatePostPage()
         }
         composable<MapPage> {
-            //TODO: MapPage Page
-            Text("MapPage")
+            val args = it.toRoute<MapPage>()
+            if (args.startingLatitude == null || args.startingLongitude == null) {
+                MapPage()
+            } else {
+                MapPage(postLocation = Point.fromLngLat(args.startingLongitude, args.startingLatitude))
+            }
+
         }
     }
 }

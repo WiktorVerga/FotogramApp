@@ -8,7 +8,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.first
 
 class SettingsRepository(private val dataStore: DataStore<Preferences>) {
-    //Insieme di chiavi utilizzabili
+    //Possible Keys
     private companion object {
         val LOGGED_USER_ID = intPreferencesKey("logged_user")
         val SESSION_ID = stringPreferencesKey("session_id")

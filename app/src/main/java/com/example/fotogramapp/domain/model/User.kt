@@ -14,7 +14,7 @@ data class User(
     val dateOfBirth: String = "Unknown",
     val profilePicture: String? = null,
     val isYourFollower: Boolean,
-    val isYourFollowing: Boolean,
+    var isYourFollowing: Boolean,
     val followersCount: Int,
     val followingCount: Int,
     val postsCount: Int

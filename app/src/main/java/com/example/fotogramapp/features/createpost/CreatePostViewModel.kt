@@ -49,16 +49,22 @@ class CreatePostViewModel(
 
     val handlePublish: () -> Unit = {
         viewModelScope.launch {
-            try {
-                postRepo.addPost(message, image, location)
-                navController.popBackStack()
-            } catch (e: APIException) {
-                Log.d("CreatePostViewModel", e.message ?: "Unknown Error")
-            } catch (e: IOException) {
-                snackbarHostState.showSnackbar("No Internet Connection")
-            } catch (e: HttpRequestTimeoutException) {
-                snackbarHostState.showSnackbar("Timeout Error")
+            if (message != "" && image != "") {
+                try {
+                    postRepo.addPost(message, image, location)
+                    navController.popBackStack()
+                    snackbarHostState.showSnackbar("Post Published")
+                } catch (e: APIException) {
+                    Log.d("CreatePostViewModel", e.message ?: "Unknown Error")
+                } catch (e: IOException) {
+                    snackbarHostState.showSnackbar("No Internet Connection")
+                } catch (e: HttpRequestTimeoutException) {
+                    snackbarHostState.showSnackbar("Timeout Error")
+                }
+            } else {
+                snackbarHostState.showSnackbar("Please fill out all non-optional fields")
             }
+
         }
     }
 }

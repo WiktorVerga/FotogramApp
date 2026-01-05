@@ -9,6 +9,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class TextInputViewModel : ViewModel() {
+
+    // == State ==
     var text by mutableStateOf("")
         private set
 
@@ -18,15 +20,13 @@ class TextInputViewModel : ViewModel() {
         private set
 
 
-    // Funzione per aggiornare il testo
+    // == Methods ==
     fun onTextChange(newText: String) {
         text = newText
     }
 
-    //Funzione per Controllo Errori
     fun checkForErrors(minSize: Int, maxSize: Int) =  !(text.length in minSize..maxSize)
 
-    //Funzione per gestione Errori
     fun handleValue(minSize: Int, maxSize: Int, getValidText: (String) -> Unit) {
         hasError = checkForErrors(minSize, maxSize)
 

@@ -38,6 +38,9 @@ fun DateInput(
 
     val dateInputVM: DateInputViewModel = viewModel(key = id)
 
+    // == Launched Effects ==
+
+    //Send date to parent
     LaunchedEffect(dateInputVM.selectedDate) {
         val datePicked = dateInputVM.selectedDate
 
@@ -46,6 +49,7 @@ fun DateInput(
         }
     }
 
+    //Set initial state if present
     LaunchedEffect(Unit) {
         if (initialDate != null) {
             dateInputVM.setInitialDate(initialDate)
@@ -66,12 +70,13 @@ fun DateInput(
                 .padding(20.dp)
 
         ) {
+            // == Title ==
             Text(title,
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.ExtraBold
             )
 
-
+            // == Date Picker Toggle ==
             Column(
                 modifier = modifier
                     .fillMaxWidth()
@@ -86,7 +91,6 @@ fun DateInput(
                             .fillMaxWidth()
                     ) {
                         Text(
-
                             text = "Select from the Calendar",
                             style = MaterialTheme.typography.bodyLarge,
                             color = Color.Gray
@@ -104,22 +108,9 @@ fun DateInput(
             }
         }
 
+        // == Date Picker ==
         if (dateInputVM.showDatePicker)
             DatePickerModal(onDateSelected = dateInputVM.handleDateSelection, onDismiss = { dateInputVM.toggleDataPicker() })
-    }
-
-}
-
-
-@Preview
-@Composable
-private fun DateInputPrev() {
-    FotogramTheme() {
-        DateInput(
-            id = "datePreview",
-            title = "",
-            getStringeDate = { },
-        )
     }
 
 }

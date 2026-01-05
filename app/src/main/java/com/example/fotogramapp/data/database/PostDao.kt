@@ -17,12 +17,23 @@ interface PostDao {
     @Query("SELECT * FROM Post WHERE id IN (:ids)")
     suspend fun getPostsByIds(ids: List<Int>): List<Post?>
 
+    @Query("SELECT id FROM Post WHERE authorId = :authorId AND id < :maxPostId ORDER BY id DESC LIMIT 10")
+    suspend fun getOfflineAuthorPosts(authorId: Int, maxPostId: Int? = null): List<Int>
+
+
     @Query("SELECT id FROM Post WHERE authorId = :authorId")
     suspend fun getPostsByAuthor(authorId: Int): List<Int>
+
+    @Query("SELECT id FROM Post WHERE location IS NOT NULL")
+    suspend fun getMappedLoadedPosts(): List<Int>
 
     @Query("DELETE FROM Post WHERE id = :id")
     suspend fun clear(id: Int)
 
     @Query("DELETE FROM Post")
     suspend fun clearAll()
+
+    @Query("DELETE FROM Post WHERE id = :id")
+    suspend fun deletePostById(id: Int)
+
 }

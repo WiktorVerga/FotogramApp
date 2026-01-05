@@ -20,7 +20,7 @@ fun BentoInformation(modifier: Modifier = Modifier, spacing: Int = 15, biograpy:
             .fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(spacing.dp),
     ) {
-        // -- Biography & Followers & Following --
+        // == Biography & Followers & Following ==
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -75,7 +75,7 @@ fun BentoInformation(modifier: Modifier = Modifier, spacing: Int = 15, biograpy:
             }
         }
 
-        // -- DoB & Posts
+        // == DoB & Posts ==
         Row(
             modifier = Modifier
                 .fillMaxWidth(),

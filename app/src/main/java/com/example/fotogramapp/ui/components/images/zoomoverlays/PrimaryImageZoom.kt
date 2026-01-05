@@ -46,11 +46,13 @@ fun PrimaryImageZoom(
     onDismiss: () -> Unit
 ) {
 
+    // == Movable Image State ==
     var offsetX by mutableStateOf(0f)
     var offsetY by mutableStateOf(0f)
 
 
     Box(modifier = modifier.fillMaxSize()) {
+        //Image is Zoomed:
         if (show) {
             Dialog(
                 onDismissRequest = onDismiss,
@@ -85,7 +87,7 @@ fun PrimaryImageZoom(
                                     offsetX = (offsetX + dragAmount.x).coerceIn(-maxX, maxX)
                                     offsetY = (offsetY + dragAmount.y).coerceIn(-maxY, maxY)
 
-                                    //Controllo che lo swipe sia principalmente orizzontale
+                                    //Check if the image hits the designated edge to dismiss dialog
                                     if (offsetX == -maxX || offsetX == maxX || offsetY == -maxY || offsetY == maxY) {
                                         onDismiss()
 
@@ -97,6 +99,7 @@ fun PrimaryImageZoom(
                         contentAlignment = Alignment.Center
                     ) {
                         if (image != null)
+                            //Show Fullscreen Image
                             Image(
                                 modifier = Modifier.fillMaxSize(),
                                 bitmap = image.asImageBitmap(),
@@ -104,7 +107,7 @@ fun PrimaryImageZoom(
                                 contentScale = ContentScale.Fit
                             )
                         else {
-                            //Placeholder for normal Image
+                            //Show Placeholder for Normal Image
                             SubcomposeAsyncImage(
                                 modifier = modifier
                                     .fillMaxWidth(),

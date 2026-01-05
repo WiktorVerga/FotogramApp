@@ -14,8 +14,10 @@ import com.example.fotogramapp.data.repository.PostRepository
 import com.example.fotogramapp.data.repository.SettingsRepository
 import com.example.fotogramapp.data.repository.UserRepository
 import com.example.fotogramapp.domain.model.Post
+import com.example.fotogramapp.navigation.MapPage
 import com.example.fotogramapp.navigation.Profile
 import com.mapbox.geojson.Point
+import io.ktor.client.plugins.HttpRequestTimeoutException
 import kotlinx.coroutines.launch
 import okio.IOException
 
@@ -30,7 +32,18 @@ class PostCardViewModel(
     var loading by mutableStateOf(true)
         private set
 
+    var showMenu by mutableStateOf(false)
+        private set
+
+    val menuItems = mapOf<String, () -> Unit>(
+        "Delete" to {
+            handleDelete()
+        }
+    )
+
     // == Post Data ==
+    var id by mutableStateOf(-1)
+        private set
     var creatorUsername by mutableStateOf("")
         private set
 
@@ -66,8 +79,72 @@ class PostCardViewModel(
         )
     }
 
+    val handleDelete = {
+        viewModelScope.launch {
+            try {
+                postRepo.deletePost(postId = id)
+
+                navController.popBackStack()
+                navController.navigate(Profile(creatorId))
+                snackbarHostState.showSnackbar("Post Deleted")
+
+            } catch (e: APIException) {
+                Log.d("PostCardViewModel", e.message ?: "Unknown Error")
+            } catch (e: IOException) {
+                snackbarHostState.showSnackbar(
+                    "No Internet Connection",
+                    duration = SnackbarDuration.Long
+                )
+            } catch (e: HttpRequestTimeoutException) {
+                snackbarHostState.showSnackbar(
+                    "Request Timeout",
+                    duration = SnackbarDuration.Long
+                )
+            }
+        }
+    }
+
+    val handleLocation = {
+        val location = location
+        location?.let {
+            navController.navigate(MapPage(location.longitude(), location.latitude()))
+        }
+    }
+
+    val handleFollow = {
+        viewModelScope.launch {
+            try {
+
+                userRepo.followUser(creatorId)
+
+                isSuggested = false
+                snackbarHostState.showSnackbar("Followed ${creatorUsername}")
+
+            } catch (e: APIException) {
+                Log.d("PostCardViewModel", e.message ?: "Unknown Error")
+            } catch (e: IOException) {
+                snackbarHostState.showSnackbar(
+                    "No Internet Connection",
+                    duration = SnackbarDuration.Long
+                )
+            } catch (e: HttpRequestTimeoutException) {
+                snackbarHostState.showSnackbar(
+                    "Request Timeout",
+                    duration = SnackbarDuration.Long
+                )
+            }
+        }
+    }
 
     // == Methods ==
+
+    fun toggleMenu() {
+        showMenu = !showMenu
+    }
+
+    fun closeMenu() {
+        showMenu = false
+    }
 
     fun loadPostData(postId: Int) {
         viewModelScope.launch {
@@ -80,6 +157,8 @@ class PostCardViewModel(
                 creatorUsername = author.username
                 creatorPicture = author.profilePicture
                 creatorId = author.id
+
+                id = post.id
                 message = post.message
                 image = post.image
                 location = post.location
@@ -91,9 +170,11 @@ class PostCardViewModel(
             } catch (e: APIException) {
                 Log.d("PostCardViewModel", e.message ?: "Unknown Error")
             } catch (e: IOException) {
-                snackbarHostState.showSnackbar("No Internet Connection", duration = SnackbarDuration.Long)
+            } catch (e: HttpRequestTimeoutException) {
+                snackbarHostState.showSnackbar(
+                    "Request Timeout"
+                )
             }
-
         }
     }
 }

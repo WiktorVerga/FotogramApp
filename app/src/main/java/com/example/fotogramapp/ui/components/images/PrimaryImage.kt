@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,6 +40,7 @@ fun PrimaryImage(modifier: Modifier = Modifier, image64: String? = "", isPfp: Bo
 
 @Composable
 fun PrimaryImage(modifier: Modifier = Modifier, imageBitmap: Bitmap?, isPfp: Boolean = false) {
+    // == Simple State ==
     var showZoomImage by remember { mutableStateOf(false) }
 
     Box(
@@ -57,9 +59,10 @@ fun PrimaryImage(modifier: Modifier = Modifier, imageBitmap: Bitmap?, isPfp: Boo
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .clip(CircleShape)
+                        .fillMaxWidth()
                 )
             } else {
-                //Show normal Image, with 1:1 ratio
+                //Show Normal Image, with 1:1 ratio
                 Image(
                     modifier = Modifier.fillMaxSize(),
                     bitmap = imageBitmap.asImageBitmap(),
@@ -73,14 +76,14 @@ fun PrimaryImage(modifier: Modifier = Modifier, imageBitmap: Bitmap?, isPfp: Boo
                 Image(
                     painter = painterResource(id = R.drawable.user_placeholder),
                     contentDescription = "Profile Picture Placeholder",
-                    contentScale = ContentScale.FillBounds,
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .size(80.dp)
                         .clip(CircleShape)
 
                 )
             } else {
-                //Placeholder for normal Image
+                //Placeholder for Normal Image
                 SubcomposeAsyncImage(
                     modifier = Modifier
                         .fillMaxSize(),
@@ -110,6 +113,7 @@ fun PrimaryImage(modifier: Modifier = Modifier, imageBitmap: Bitmap?, isPfp: Boo
             }
         }
 
+        //Image Zoom
         PrimaryImageZoom(
             show = showZoomImage,
             image = imageBitmap,

@@ -13,4 +13,6 @@ object CustomIcons {
     @DrawableRes val SuggestedUser = R.drawable.ic_suggested_user
 
     @DrawableRes val Exit = R.drawable.ic_exit
+
+    @DrawableRes val PointsMenu = R.drawable.ic_points_menu
 }

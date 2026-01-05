@@ -12,21 +12,32 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import java.util.Calendar
+import java.util.TimeZone
 
 @Composable
 fun DatePickerModal(
     onDateSelected: (Long?) -> Unit,
     onDismiss: () -> Unit
 ) {
+    // == Date Picker State ==
     val datePickerState = rememberDatePickerState(
         selectableDates = object : SelectableDates {
             override fun isSelectableDate(utcMillisecondsSinceEpoch: Long): Boolean {
-                val today = System.currentTimeMillis()
-                return utcMillisecondsSinceEpoch <= today
+
+                val maxCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
+                    add(Calendar.YEAR, -13)
+                }
+
+                val maxDate = maxCalendar.timeInMillis
+
+                return utcMillisecondsSinceEpoch <= maxDate
             }
-        }
+        },
+        yearRange = 1920..(Calendar.getInstance().get(Calendar.YEAR) - 13)
     )
 
+    // == Dialog UI ==
     DatePickerDialog(
         onDismissRequest = onDismiss,
         confirmButton = {

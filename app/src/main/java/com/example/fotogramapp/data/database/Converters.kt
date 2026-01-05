@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.mapbox.geojson.Point
 
+// == Converters for Room Database ==
 class Converters {
     private val gson = Gson()
 

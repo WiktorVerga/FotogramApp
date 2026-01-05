@@ -4,11 +4,13 @@ import android.util.Log
 import androidx.core.net.toUri
 import com.example.fotogramapp.data.remote.APIException
 import com.example.fotogramapp.data.remote.GeocodingResponse
-import com.example.fotogramapp.data.remote.Location
+import com.example.fotogramapp.data.remote.LocationBody
+import com.example.fotogramapp.data.remote.PostBody
 import com.example.fotogramapp.data.remote.RemoteError
 import com.example.fotogramapp.data.remote.UserLogged
 import com.example.fotogramapp.domain.model.Post
 import com.example.fotogramapp.domain.model.User
+import com.google.android.gms.common.api.ApiException
 import com.mapbox.geojson.Point
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -25,8 +27,12 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.plugins.ClientRequestException
+import io.ktor.client.plugins.ServerResponseException
 import io.ktor.client.request.parameter
 import kotlinx.serialization.json.Json
+import okio.IOException
+import java.net.ConnectException
 
 class RemoteDataSource(val sessionId: String = "") {
 
@@ -68,42 +74,51 @@ class RemoteDataSource(val sessionId: String = "") {
         queryParams: Map<String, Any> = emptyMap(),
     ) : HttpResponse {
 
-        // Build the URL
-        val urlUri = (BASE_URL + endpoint).toUri()
-        val urlBuilder = urlUri.buildUpon()
-        queryParams.forEach { (key, value) ->
-            urlBuilder.appendQueryParameter(key, value.toString())
-        }
-        val completeUrlString = urlBuilder.build().toString()
+        try {
 
-        // Build the Request Header
-        Log.d(TAG, "Request to: $completeUrlString")
-        val request: HttpRequestBuilder.() -> Unit = {
-            bodyParams?.let {
-                contentType(ContentType.Application.Json)
-                setBody(bodyParams)
+            // Build the URL
+            val urlUri = (BASE_URL + endpoint).toUri()
+            val urlBuilder = urlUri.buildUpon()
+            queryParams.forEach { (key, value) ->
+                urlBuilder.appendQueryParameter(key, value.toString())
             }
-            headers {
-                append("x-session-id",
-                    SESSION_ID
-                )
+            val completeUrlString = urlBuilder.build().toString()
+
+            // Build the Request Header
+            Log.d(TAG, "Request to: $completeUrlString")
+            val request: HttpRequestBuilder.() -> Unit = {
+                bodyParams?.let {
+                    contentType(ContentType.Application.Json)
+                    setBody(bodyParams)
+                }
+                headers {
+                    append(
+                        "x-session-id",
+                        SESSION_ID
+                    )
+                }
             }
-        }
 
-        // Make the Request and return the Response
+            // Make the Request and return the Response
 
-        val httpResponse = when (method) {
-            HttpMethod.GET -> client.get(completeUrlString, request)
-            HttpMethod.POST -> client.post(completeUrlString, request)
-            HttpMethod.DELETE -> client.delete(completeUrlString, request)
-            HttpMethod.PUT -> client.put(completeUrlString, request)
+            val httpResponse = when (method) {
+                HttpMethod.GET -> client.get(completeUrlString, request)
+                HttpMethod.POST -> client.post(completeUrlString, request)
+                HttpMethod.DELETE -> client.delete(completeUrlString, request)
+                HttpMethod.PUT -> client.put(completeUrlString, request)
+            }
+            return httpResponse
+        } catch (e: ConnectException) {
+            // Errore di connessione (offline, server irraggiungibile)
+            // Lancia un'eccezione personalizzata e più significativa per il resto dell'app
+            throw IOException("Impossible to connect to the Server")
         }
-        return httpResponse
     }
 
     // == User API ==
 
     suspend fun signUpUser(): Pair<Int, String> {
+
         val httpResponse = genericRequest(
             endpoint = "user",
             method = HttpMethod.POST
@@ -182,16 +197,51 @@ class RemoteDataSource(val sessionId: String = "") {
         }
     }
 
+    suspend fun followUser(targetId: Int) {
+        val httpResponse = genericRequest(
+            endpoint = "follow/$targetId",
+            method = HttpMethod.PUT
+        )
+
+        when (httpResponse.status.value) {
+            204 -> {
+                return
+            }
+            else -> {
+                throw APIException(httpResponse.body<RemoteError>().message)
+            }
+        }
+    }
+
+    suspend fun unFollowUser(targetId: Int) {
+        val httpResponse = genericRequest(
+            endpoint = "follow/$targetId",
+            method = HttpMethod.DELETE
+        )
+
+        when (httpResponse.status.value) {
+            204 -> {
+                return
+            }
+            else -> {
+                throw APIException(httpResponse.body<RemoteError>().message)
+            }
+        }
+    }
+
     // == Posts API ==
     suspend fun createPost(message: String, image: String, location: Point?): Post {
 
-        val bodyParams = mutableMapOf<String, Any>(
-            "contentText" to message,
-            "contentPicture" to image,
+        val bodyParams = PostBody(
+            message = message,
+            image = image,
+            location = location?.let {
+                LocationBody(
+                    latitude = it.latitude(),
+                    longitude = it.longitude()
+                )
+            }
         )
-        location?.let {
-            bodyParams["location"] = Location(it.latitude(), it.longitude())
-        }
 
         val httpResponse = genericRequest(
             endpoint = "post",

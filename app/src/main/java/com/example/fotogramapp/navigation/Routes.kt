@@ -3,7 +3,7 @@ package com.example.fotogramapp.navigation
 import kotlinx.serialization.Serializable
 import com.example.fotogramapp.domain.model.User
 
-//Route without parameters
+// == Route without Parameters ==
 @Serializable
 object SignUp
 
@@ -13,15 +13,14 @@ object Discover
 @Serializable
 object CreatePost
 
-//Route with parameters
+// == Route with Parameters ==
 @Serializable
 data class Profile(val id: Int?)
 
 @Serializable
 data class MapPage(
-    val startingLongitude: Double,
-    val startingLatitude: Double,
-    val zoom: Double
+    val startingLongitude: Double?,
+    val startingLatitude: Double?
 )
 
 @Serializable

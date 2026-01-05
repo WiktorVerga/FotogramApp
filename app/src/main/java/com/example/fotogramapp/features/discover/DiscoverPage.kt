@@ -5,10 +5,14 @@ import android.util.Log
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.runtime.LaunchedEffect
@@ -24,7 +28,9 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.fotogramapp.LocalPostRepository
 import com.example.fotogramapp.LocalUserRepository
 import com.example.fotogramapp.app.LocalNavController
+import com.example.fotogramapp.app.LocalSnackbar
 import com.example.fotogramapp.navigation.CreatePost
+import com.example.fotogramapp.ui.components.offlineretry.OfflineRetry
 import com.example.fotogramapp.ui.components.title.LargeHeadline
 import kotlin.math.abs
 
@@ -33,6 +39,7 @@ fun DiscoverPage(modifier: Modifier = Modifier) {
     val navController = LocalNavController.current
     val userRepo = LocalUserRepository.current
     val postRepo = LocalPostRepository.current
+    val snackbarHostState = LocalSnackbar.current
 
     val viewModel: DiscoverViewModel = viewModel(
         factory = viewModelFactory {
@@ -40,17 +47,15 @@ fun DiscoverPage(modifier: Modifier = Modifier) {
                 DiscoverViewModel(
                     navController = navController,
                     userRepo = userRepo,
-                    postRepo = postRepo
+                    postRepo = postRepo,
+                    snackbarHostState = snackbarHostState
                 )
             }
         }
     )
 
+    // == State for Scrolling Effect =
     var totalDx by remember { mutableStateOf(0f) }
-
-    LaunchedEffect(Unit) {
-        viewModel.loadFeed()
-    }
 
     val lazyColState = rememberLazyListState(
         initialFirstVisibleItemIndex = viewModel.firstVisibleItemIndex,
@@ -61,69 +66,92 @@ fun DiscoverPage(modifier: Modifier = Modifier) {
         derivedStateOf { lazyColState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
     }
 
+    // == Launch Effect ==
+
+    //Load Feed
+    LaunchedEffect(Unit) {
+        viewModel.loadFeed()
+    }
+
     // Trigger fetch when near the bottom
     LaunchedEffect(lastVisibleIndex.value) {
         val lastVisibleIndex = lazyColState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
         val total = lazyColState.layoutInfo.totalItemsCount
         val threshold = total - 3
 
-        if (threshold > 1) {
+        if (threshold > 3) {
+            viewModel.saveMaxPostId(viewModel.postIds[viewModel.postIds.lastIndex]-1)
             if (lastVisibleIndex != null && lastVisibleIndex >= threshold) {
-                Log.d("DiscoverPage", "lastVisibleIndex: ${viewModel.postIds[viewModel.postIds.lastIndex]-1}")
-                viewModel.loadFeed(maxPostId = viewModel.postIds[viewModel.postIds.lastIndex]-1)
+                Log.d("DiscoverViewModel", "lastVisibleIndex: ${viewModel.maxPostId}")
+                viewModel.loadFeed()
             }
         }
 
     }
-
 
     PullToRefreshBox(
         modifier = modifier,
         isRefreshing = viewModel.isRefreshing,
         onRefresh = { viewModel.refreshFeed() },
     ) {
-        LazyColumn (
-            modifier = Modifier
-                .pointerInput(Unit) {
-                    detectDragGestures(
-                        onDrag = { change, dragAmount ->
-                            change.consume()
-                            val (dx, dy) = dragAmount
 
-                            //Controllo che lo swipe sia principalmente orizzontale
-                            if (abs(dx) > 50f && abs(dy / dx) < 0.4f) {
-                                if (dx > 0) {
-                                    totalDx += dragAmount.x
+            LazyColumn (
+                modifier = Modifier
+                    .pointerInput(Unit) {
+                        detectDragGestures(
+                            onDrag = { change, dragAmount ->
+                                change.consume()
+                                val (dx, dy) = dragAmount
+
+                                //Controllo che lo swipe sia principalmente orizzontale
+                                if (abs(dx) > 50f && abs(dy / dx) < 0.4f) {
+                                    if (dx > 0) {
+                                        totalDx += dragAmount.x
+                                    }
+                                }
+                            },
+                            onDragEnd = {
+                                if (totalDx > 150f) {
+                                    navController.navigate(CreatePost)
                                 }
                             }
-                        },
-                        onDragEnd = {
-                            if (totalDx > 150f) {
-                                navController.navigate(CreatePost)
+                        )
+                    },
+                verticalArrangement = Arrangement.spacedBy(30.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                state = lazyColState
+            ) {
+
+                // == Headline ==
+                item {
+                    LargeHeadline("Discover your Feed \uD83D\uDD0D")
+                }
+
+                // == Posts ==
+                itemsIndexed(viewModel.postIds) { index, postId ->
+                    PostCard(key = index.toString(), postId = postId)
+                }
+
+                if (!viewModel.isRefreshing) {
+                    // == End Section & Offline Handling ==
+                    if (!viewModel.offline) {
+                        item {
+                            Text(
+                                text = "You Finished your Feed!",
+                                style = MaterialTheme.typography.bodyLarge,
+                                modifier = Modifier
+                                    .padding(bottom = 50.dp)
+                            )
+
+                        }
+                    } else {
+                        item {
+                            OfflineRetry(text = "Cannot refresh Feed") {
+                                viewModel.loadFeed()
                             }
                         }
-                    )
-                },
-            verticalArrangement = Arrangement.spacedBy(30.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            state = lazyColState
-        ) {
-
-            // == Headline ==
-            item {
-                LargeHeadline("Discover your Feed \uD83D\uDD0D")
-            }
-
-
-            itemsIndexed(viewModel.postIds) { index, postId ->
-                PostCard(key = index.toString(), postId = postId)
-            }
-
-
-            // == End Spacer ==
-            item {
-                Box(modifier = Modifier.size(50.dp))
+                    }
+                }
             }
         }
-    }
 }

@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.fotogramapp.data.remote.APIException
+import com.example.fotogramapp.data.repository.PostRepository
 import com.example.fotogramapp.data.repository.SettingsRepository
 import com.example.fotogramapp.data.repository.UserRepository
 import com.example.fotogramapp.domain.model.User
@@ -16,6 +17,7 @@ import kotlinx.coroutines.launch
 class SignupViewModel(
     private val navController: NavController,
     private val userRepo: UserRepository,
+    private val postRepo: PostRepository,
     private val snackBarHostState: SnackbarHostState
 ) : ViewModel() {
 
@@ -51,9 +53,8 @@ class SignupViewModel(
     }
 
     val handleSignup: () -> Unit = {
-
-        if (username != "" && biography != "" && dob != "" && image != "") {
-            viewModelScope.launch {
+        viewModelScope.launch {
+            if (username != "" && biography != "" && dob != "" && image != "") {
 
                 //Registrazione dell'Utente
                 try {
@@ -67,9 +68,7 @@ class SignupViewModel(
                     //Cattura di qualsiasi errore della userSignup
                     error.message?.let { snackBarHostState.showSnackbar(it) }
                 }
-            }
-        } else {
-            viewModelScope.launch {
+            } else {
                 snackBarHostState.showSnackbar("Please fill out all fields")
             }
         }

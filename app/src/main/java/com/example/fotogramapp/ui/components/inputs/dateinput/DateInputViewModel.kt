@@ -8,19 +8,23 @@ import java.util.Date
 import java.util.Locale
 
 class DateInputViewModel: ViewModel() {
+
+    // == State ==
     var showDatePicker by mutableStateOf(false)
         private set
 
     var selectedDate by mutableStateOf<Long?>(null)
         private set
 
-
-    fun toggleDataPicker() {
-        showDatePicker = !showDatePicker
-    }
-
+    // == Handle Functions ==
     val handleDateSelection: (Long?) -> Unit = { date ->
         selectedDate = date
+    }
+
+
+    // == Methods ==
+    fun toggleDataPicker() {
+        showDatePicker = !showDatePicker
     }
 
     fun setInitialDate(initialDate: String) {

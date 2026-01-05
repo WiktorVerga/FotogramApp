@@ -27,10 +27,12 @@ fun TopBar(modifier: Modifier = Modifier, navController: NavController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     var currentDestination = navBackStackEntry?.destination
 
+    // == Launched Effects ==
     LaunchedEffect(navBackStackEntry) {
         currentDestination = navBackStackEntry?.destination
     }
 
+    //Personalized Titles for each screen
     val screenTitle = when {
         currentDestination.isRoute<Discover>() -> "Fotogram"
         currentDestination.isRoute<Profile>() -> "Profile"
@@ -41,59 +43,57 @@ fun TopBar(modifier: Modifier = Modifier, navController: NavController) {
         else -> "Page Not Found"
     }
 
-    if (currentDestination.isRoute<Discover>()) {
-        TopAppBar(
-            title = {
-                Text(screenTitle, style = MaterialTheme.typography.headlineMedium)
-            },
-            actions = {
-                IconButton(
-                    onClick = {
-                        navController.navigate(CreatePost)
+    when {
+        //Personalized Top Bar for Discover Screen
+        (currentDestination.isRoute<Discover>()) -> {
+            TopAppBar(
+                title = {
+                    Text(screenTitle, style = MaterialTheme.typography.headlineMedium)
+                },
+                actions = {
+                    IconButton(
+                        onClick = {
+                            navController.navigate(CreatePost)
+                        }
+                    ) {
+                        Icon(
+                            painter = painterResource(CustomIcons.Add),
+                            contentDescription = "Create new Post",
+                        )
                     }
-                ) {
-                    Icon(
-                        painter = painterResource(CustomIcons.Add),
-                        contentDescription = "Create new Post",
-                    )
-                }
-            },
-            scrollBehavior = enterAlwaysScrollBehavior(),
-            windowInsets = TopAppBarDefaults.windowInsets,
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.background,
-                scrolledContainerColor = MaterialTheme.colorScheme.background
+                },
+                scrollBehavior = enterAlwaysScrollBehavior(),
+                windowInsets = TopAppBarDefaults.windowInsets,
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background,
+                    scrolledContainerColor = MaterialTheme.colorScheme.background
+                )
             )
-        )
-    } else {
-        CenterAlignedTopAppBar(
-            title = {
-                Text(screenTitle, style = MaterialTheme.typography.headlineMedium)
-            },
-            navigationIcon = {
-                IconButton(
-                    onClick = {
-                        navController.popBackStack()
+        }
+        else -> {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(screenTitle, style = MaterialTheme.typography.headlineMedium)
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = {
+                            navController.popBackStack()
+                        }
+                    ) {
+                        Icon(
+                            painter = painterResource(CustomIcons.Back),
+                            contentDescription = "go back",
+                        )
                     }
-                ) {
-                    Icon(
-                        painter = painterResource(CustomIcons.Back),
-                        contentDescription = "go back",
-                    )
-                }
-            },
-            scrollBehavior = enterAlwaysScrollBehavior(),
-            windowInsets = TopAppBarDefaults.windowInsets,
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.background,
-                scrolledContainerColor = MaterialTheme.colorScheme.background
+                },
+                scrollBehavior = enterAlwaysScrollBehavior(),
+                windowInsets = TopAppBarDefaults.windowInsets,
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = if (currentDestination.isRoute<MapPage>()) MaterialTheme.colorScheme.background.copy(alpha = 0.7f) else MaterialTheme.colorScheme.background,
+                    scrolledContainerColor = MaterialTheme.colorScheme.background
+                )
             )
-        )
+        }
     }
-}
-
-@Preview
-@Composable
-private fun TopBarPrev() {
-    TopBar(Modifier, rememberNavController())
 }

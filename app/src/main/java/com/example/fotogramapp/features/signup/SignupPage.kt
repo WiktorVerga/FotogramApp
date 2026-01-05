@@ -23,6 +23,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.fotogramapp.LocalDataStore
+import com.example.fotogramapp.LocalPostRepository
 import com.example.fotogramapp.LocalUserRepository
 import com.example.fotogramapp.app.LocalNavController
 import com.example.fotogramapp.app.LocalSnackbar
@@ -38,6 +39,7 @@ fun SignupPage(modifier: Modifier = Modifier) {
 
     val navController = LocalNavController.current
     val userRepo = LocalUserRepository.current
+    val postRepo = LocalPostRepository.current
     val snackbarHostState = LocalSnackbar.current
 
     val viewModel: SignupViewModel = viewModel(
@@ -46,6 +48,7 @@ fun SignupPage(modifier: Modifier = Modifier) {
                 SignupViewModel(
                     navController = navController,
                     userRepo = userRepo,
+                    postRepo = postRepo,
                     snackBarHostState = snackbarHostState
                 )
             }
@@ -65,6 +68,7 @@ fun SignupPage(modifier: Modifier = Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally,
 
         ) {
+            // == Title ==
             Text(
                 text = "Sign Up",
                 modifier = modifier
@@ -76,6 +80,7 @@ fun SignupPage(modifier: Modifier = Modifier) {
                 textAlign = TextAlign.Center,
             )
 
+            // == Input Fields ==
             TextInput(
                 id = "username",
                 title = "Username",
@@ -105,6 +110,7 @@ fun SignupPage(modifier: Modifier = Modifier) {
                 isPfp = true
             )
 
+            // == Confirmation Buttons ==
             PrimaryButton(
                 modifier = modifier.padding(vertical = 50.dp),
                 text = "Sign Up",

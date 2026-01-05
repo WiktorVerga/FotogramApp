@@ -12,6 +12,7 @@ class LocationInputViewModel(
     private val accessToken: String
 ) : ViewModel() {
 
+    // == State ==
     var location by mutableStateOf<Point?>(null)
         private set
 
@@ -22,11 +23,7 @@ class LocationInputViewModel(
         private set
 
 
-    // == Methods ==
-    fun showLocationPicker() {
-        showLocationPicker = true
-    }
-
+    // == Handle Function ==
     val handleDismiss: () -> Unit  = {
         showLocationPicker = false
     }
@@ -34,6 +31,11 @@ class LocationInputViewModel(
     val handleGetLocation: (Point) -> Unit = {
         location = it
         locationToAddress(it)
+    }
+
+    // == Methods ==
+    fun showLocationPicker() {
+        showLocationPicker = true
     }
 
     fun locationToAddress(point: Point) {

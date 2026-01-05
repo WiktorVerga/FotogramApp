@@ -10,7 +10,8 @@ import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 
 
- fun String.toBitmap(): Bitmap? {
+//Extension of String Methods
+fun String.toBitmap(): Bitmap? {
     if (this == "") return null
 
     return try {
@@ -21,16 +22,27 @@ import java.io.ByteArrayOutputStream
     }
 }
 
+//Extension of Bitmap Methods
+//Long IO operation -> used withContext(Dispatchers.IO)
 suspend fun Bitmap?.toBase64(): String? = withContext(Dispatchers.IO) {
     if (this@toBase64 == null) return@withContext null
 
     try {
-        Log.d("ImageInputViewModel", "Sto prendendo l'immagine da Picker")
         val outputStream = ByteArrayOutputStream()
+
+        //Image Compression to 70%
         this@toBase64.compress(Bitmap.CompressFormat.PNG, 70, outputStream)
         val byteArray = outputStream.toByteArray()
         Base64.encodeToString(byteArray, Base64.NO_WRAP)
     } catch (e: Exception) {
         null
     }
+}
+
+fun resizeBitmap(
+    bitmap: Bitmap,
+    width: Int,
+    height: Int
+): Bitmap {
+    return Bitmap.createScaledBitmap(bitmap, width, height, true)
 }

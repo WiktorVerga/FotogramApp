@@ -15,6 +15,8 @@ class EditProfileViewModel(
     private val userRepo: UserRepository,
     private val navController: NavController
 ) : ViewModel() {
+
+    // == State ==
     var username by mutableStateOf<String?>(null)
         private set
 
@@ -53,8 +55,8 @@ class EditProfileViewModel(
 
                 userRepo.updateUserDetails(username, biography, dob, image)
 
-                snackBarHostState.showSnackbar("Profile Saved")
                 navController.popBackStack()
+                snackBarHostState.showSnackbar("Profile Saved")
             } catch (error: APIException) {
                 //Cattura di qualsiasi errore della userSignup
                 error.message?.let { snackBarHostState.showSnackbar(it) }

@@ -10,17 +10,10 @@ import kotlinx.coroutines.launch
 
 class PostRepository(
     private val database: AppDatabase,
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val remoteDataSource: RemoteDataSource
 ) {
     private val postDao = database.postDao()
-    var remoteDataSource = RemoteDataSource()
-
-    init {
-        //Se già fatto l'accesso, Fornisco il sessionId al remoteDataSource
-        CoroutineScope(Dispatchers.IO).launch {
-            settingsRepository.getSessionId()?.let { remoteDataSource.provideSessionId(it) }
-        }
-    }
 
     // == Get Posts ==
     suspend fun getFeed(maxPostId: Int?, limit: Int?, seed: Int?): List<Int> {
@@ -32,29 +25,46 @@ class PostRepository(
     }
 
     suspend fun getPost(postId: Int): Post {
-        //Prendo da Cache
+        //Fetch from Cache
         val cachedPost = postDao.getPostById(postId)
 
         if (cachedPost != null) {
             return cachedPost
         }
 
-        //Prendo da rete
+        //Fetch from Network
         val remotePost = remoteDataSource.fetchPost(postId)
 
-        //Aggiorno cache
+        //Update Cache
         postDao.insertPost(remotePost)
 
         return remotePost
     }
 
-    suspend fun getAuthorPosts(authorId: Int, maxPostId: Int? = null, limit: Int? = null) =
-        remoteDataSource.fetchAuthorPosts(authorId, maxPostId, limit)
+    suspend fun getAuthorPosts(authorId: Int, maxPostId: Int? = null, limit: Int? = null): List<Int> {
+        return remoteDataSource.fetchAuthorPosts(authorId, maxPostId, limit)
+    }
+
+    suspend fun getOfflineAuthorPosts(authorId: Int, maxPostId: Int? = null, limit: Int = 10): List<Int> {
+        return postDao.getOfflineAuthorPosts(authorId, maxPostId)
+    }
+
+    suspend fun getMappedLoadedPosts(): List<Int> {
+        return postDao.getMappedLoadedPosts()
+    }
+
+    // == Add Post ==
 
     suspend fun addPost(message: String, image: String, location: Point? = null) {
         val post = remoteDataSource.createPost(message, image, location)
 
-        //Salvo nella Cache
+        //Save in Cache
         postDao.insertPost(post)
+    }
+
+    // == Delete Post ==
+    suspend fun deletePost(postId: Int) {
+        remoteDataSource.deletePost(postId)
+        postDao.deletePostById(postId)
     }
 }

@@ -1,13 +1,17 @@
 
 
+import android.util.Log
+import androidx.compose.foundation.Indication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -19,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -36,6 +41,8 @@ import com.example.fotogramapp.app.LocalSnackbar
 import com.example.fotogramapp.domain.model.Post
 import com.example.fotogramapp.ui.components.images.PrimaryImage
 import com.example.fotogramapp.ui.components.post.PostCardViewModel
+import com.example.fotogramapp.ui.components.post.PostPlaceholderCard
+import com.example.fotogramapp.ui.components.post.postmenu.PostCardMenu
 import com.example.fotogramapp.ui.theme.CustomIcons
 
 @Composable
@@ -59,106 +66,169 @@ fun PostCard(modifier: Modifier = Modifier, key: String? = null, postId: Int) {
         }
     )
 
+    val interactionSource = remember { MutableInteractionSource() }
+
+
+    // == Launch Effects ==
     LaunchedEffect(Unit) {
         viewModel.loadPostData(postId)
     }
 
-    Card(
-        modifier = modifier
-            .size(width = 330.dp, height = 500.dp),
-        shape = RoundedCornerShape(30.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer
-        )
-    ) {
-        Column(
-
+    if (viewModel.loading) {
+        // == Loading Handling ==
+        PostPlaceholderCard()
+    } else {
+        Card(
+            modifier = modifier
+                .size(width = 330.dp, height = 500.dp),
+            shape = RoundedCornerShape(30.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.secondaryContainer
+            )
         ) {
-            // == User Header ==
-            Row(
+            Box(
                 modifier = Modifier
-                    .padding(top = 15.dp, start = 15.dp, end = 15.dp, bottom = 10.dp)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                    .clickable(indication = null, interactionSource = interactionSource, onClick = {
+                        viewModel.closeMenu()
+                    })
             ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .clickable(onClick = viewModel.handleProfileOnClick)
+                Column(
+
                 ) {
+                    // == User Header ==
+                    Row(
+                        modifier = Modifier
+                            .padding(top = 15.dp, start = 15.dp, end = 15.dp, bottom = 10.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .clickable(onClick = viewModel.handleProfileOnClick)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(width = 45.dp, height = 45.dp)
+                                    .border(
+                                        width = 1.dp,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        shape = CircleShape
+                                    )
+                                    .background(
+                                        MaterialTheme.colorScheme.tertiaryContainer, CircleShape
+                                    )
+
+                            ) {
+                                PrimaryImage(image64 = viewModel.creatorPicture, isPfp = true)
+                            }
+                            Column {
+                                Text(
+                                    text = viewModel.creatorUsername,
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    fontSize = 20.sp
+                                )
+                                if (!viewModel.isCurrentUser) {
+                                    Text(
+                                        if (viewModel.isSuggested) "Suggested" else "You Follow",
+                                        style = MaterialTheme.typography.labelSmall
+                                    )
+                                }
+                            }
+                        }
+                        if (viewModel.isSuggested) {
+                            if (viewModel.isCurrentUser) {
+                                // == Current User Header ==
+                                Box () {
+                                    // == Post Menu Toggle ==
+                                    Icon(
+                                        modifier = Modifier
+                                            .size(25.dp)
+                                            .clickable(
+                                                indication = null,
+                                                interactionSource = interactionSource,
+                                                onClick = {
+                                                    viewModel.toggleMenu()
+                                                }),
+                                        painter = painterResource(CustomIcons.PointsMenu),
+                                        contentDescription = "Suggested User Icon",
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+                            } else {
+                                // == Suggested User Header ==
+                                Icon(
+                                    modifier = Modifier
+                                        .size(45.dp)
+                                        .clickable(
+                                            indication = null,
+                                            interactionSource = interactionSource,
+                                            onClick = {
+                                                viewModel.handleFollow()
+                                            }
+                                        ),
+                                    painter = painterResource(CustomIcons.SuggestedUser),
+                                    contentDescription = "Suggested User Icon",
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        }
+                    }
+
+                    // == Post Image ==
                     Box(
                         modifier = Modifier
-                            .size(width = 45.dp, height = 45.dp)
-                            .border(
-                                width = 1.dp,
-                                color = MaterialTheme.colorScheme.primary,
-                                shape = CircleShape
-                            )
-                            .background(MaterialTheme.colorScheme.tertiaryContainer, CircleShape)
-
+                            .size(width = 330.dp, height = 330.dp)
+                            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
                     ) {
-                        PrimaryImage(image64 = viewModel.creatorPicture, isPfp = true)
+                        PrimaryImage(image64 = viewModel.image)
                     }
-                    Column {
+
+                    // == Post Message & Location ==
+                    Row(
+                        modifier = Modifier
+                            .padding(top = 10.dp, start = 15.dp, end = 15.dp, bottom = 15.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Text(
-                            text = viewModel.creatorUsername,
-                            style = MaterialTheme.typography.headlineSmall,
-                            fontSize = 20.sp
+                            modifier = Modifier
+                                .fillMaxWidth(if (viewModel.hasLocation) 4 / 5f else 1f),
+                            text = viewModel.message,
+                            style = MaterialTheme.typography.bodyMedium,
                         )
-                        if (!viewModel.isCurrentUser) {
-                            Text(
-                                if (viewModel.isSuggested) "Suggested" else "You Follow",
-                                style = MaterialTheme.typography.labelSmall
+
+                        // == Location ==
+                        if (viewModel.hasLocation) {
+                            Icon(
+                                modifier = Modifier
+                                    .size(50.dp)
+                                    .clickable(
+                                        indication = null,
+                                        interactionSource = interactionSource,
+                                        onClick = {
+                                            viewModel.handleLocation()
+                                        }),
+                                painter = painterResource(CustomIcons.MapPin),
+                                contentDescription = "Map Location Icon",
+                                tint = MaterialTheme.colorScheme.primary
                             )
                         }
                     }
                 }
-                if (viewModel.isSuggested) {
-                    Icon(
-                        modifier = Modifier
-                            .size(45.dp),
-                        painter = painterResource(CustomIcons.SuggestedUser),
-                        contentDescription = "Suggested User Icon",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
+
+                // == Post Menu ==
+                if (viewModel.showMenu) {
+                    PostCardMenu(modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .offset(y = 60.dp)
+                        .padding(horizontal = 10.dp), items = viewModel.menuItems)
                 }
             }
 
-            // == Post Image ==
-            Box(
-                modifier = Modifier
-                    .size(width = 330.dp, height = 330.dp)
-                    .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
-            ) {
-                PrimaryImage(image64 = viewModel.image)
-            }
-
-            // == Post Message & Location ==
-            Row(
-                modifier = Modifier
-                    .padding(top = 10.dp, start = 15.dp, end = 15.dp, bottom = 15.dp)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth(if (viewModel.hasLocation) 4 / 5f else 1f),
-                    text = viewModel.message,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-                if (viewModel.hasLocation) {
-                    Icon(
-                        modifier = Modifier
-                            .size(50.dp),
-                        painter = painterResource(CustomIcons.MapPin),
-                        contentDescription = "Map Location Icon",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
-            }
         }
     }
 }

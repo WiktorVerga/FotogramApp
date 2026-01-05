@@ -37,8 +37,8 @@ fun Navbar(modifier: Modifier = Modifier, navController: NavController) {
         }
     )
 
-
-    if (!(currentDestination.isRoute<SignUp>() || currentDestination.isRoute<CreatePost>())) {
+    // == Navbar Logic ==
+    if (!(currentDestination.isRoute<SignUp>() || currentDestination.isRoute<CreatePost>() || currentDestination.isRoute<EditProfile>())) {
         NavigationBar(
             modifier =
                 modifier
@@ -69,9 +69,8 @@ fun Navbar(modifier: Modifier = Modifier, navController: NavController) {
                 onClick = {
                     navController.navigate(
                         MapPage(
-                            startingLongitude = 49.0,
-                            startingLatitude = 10.0,
-                            zoom = 10.0
+                            startingLongitude = null,
+                            startingLatitude = null,
                         )
                     )
                 },

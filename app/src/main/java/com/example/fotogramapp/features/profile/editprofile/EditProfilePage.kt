@@ -61,6 +61,7 @@ fun EditProfilePage(modifier: Modifier = Modifier, username: String, biography: 
             ) {
             LargeHeadline("Edit your Profile")
 
+            // == Input Fields ==
             TextInput(
                 id = "edit-username",
                 title = "Username",
@@ -94,6 +95,7 @@ fun EditProfilePage(modifier: Modifier = Modifier, username: String, biography: 
                 initialImage = image
             )
 
+            // == Confirmation Button ==
             PrimaryButton(
                 modifier = modifier.padding(vertical = 50.dp),
                 text = "Save Changes",

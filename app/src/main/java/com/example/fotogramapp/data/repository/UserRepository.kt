@@ -1,5 +1,7 @@
 package com.example.fotogramapp.data.repository
 
+import android.util.Log
+import com.example.fotogramapp.data.remote.APIException
 import com.example.fotogramapp.domain.model.User
 import com.example.testing_apis.model.RemoteDataSource
 import kotlinx.coroutines.CoroutineScope
@@ -9,12 +11,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import okio.IOException
 import kotlin.collections.emptyMap
 
 class UserRepository(
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val remoteDataSource: RemoteDataSource
 ) {
-    private val remoteDataSource = RemoteDataSource()
 
     private val _users = MutableStateFlow<Map<String, User>>(emptyMap())
 
@@ -22,7 +25,7 @@ class UserRepository(
 
 
     init {
-        //Se già fatto l'accesso, Fornisco il sessionId al remoteDataSource
+        //If not First Access, provide SessionId to RemoteDataSource
         CoroutineScope(Dispatchers.IO).launch {
             settingsRepository.getSessionId()?.let { remoteDataSource.provideSessionId(it) }
         }
@@ -41,17 +44,17 @@ class UserRepository(
 
         val (userId, sessionId) = signupResults
 
-        //Fornisco il sessionId al remoteDataSource
+        //Provide SessionId to RemoteDataSource
         remoteDataSource.provideSessionId(sessionId)
 
-        //Aggiorno l'utente creato con i dati inseriti dall'utente
+        //Update created User with data from Signup
         remoteDataSource.updateUserDetails(
             username = username,
             bio = biography,
             dob = dob
         )
 
-        //Aggiungo l'immagine profilo
+        //Add Profile Image to User
         remoteDataSource.upadteUserImage(
             base64 = image
         )
@@ -81,7 +84,7 @@ class UserRepository(
             )
         }
 
-        //Prendo l'utente aggiornato e aggiorno la cache
+        //Update Cache
         updatedUser?.let { updateUserCache(it) }
     }
 
@@ -93,28 +96,40 @@ class UserRepository(
             _users.value[id.toString()]?.let { return it }
         }
 
-        //Prendo da Rete
-        val remoteUser = remoteDataSource.fetchUser(id)
+        //Fetch from Network
+        try {
+            val remoteUser = remoteDataSource.fetchUser(id)
 
-        //Aggiorno la cache
-        updateUserCache(remoteUser)
 
-        return remoteUser
+            //Update Cache
+            updateUserCache(remoteUser)
+
+            return remoteUser
+        } catch (e: APIException) {
+            throw IOException(e.message)
+        }
     }
 
     suspend fun isLoggedUser(userId: Int) = userId == settingsRepository.getLoggedUserId()
 
     suspend fun getLoggedUser() = settingsRepository.getLoggedUserId()?.let { getUser(it) }
 
-    // == Update User ==
-    suspend fun followUser(userId: Int) {
-        //TODO: chiamata per fare il follow
-        TODO()
+    // == Follow Logic ==
+    suspend fun followUser(targetId: Int) {
+        remoteDataSource.followUser(targetId)
+
+        //Update Cache
+        var updatedUser = getUser(targetId)
+        updatedUser.isYourFollowing = true
+        updateUserCache(updatedUser)
     }
 
-    suspend fun unFollowUser(userId: Int) {
-        //TODO: chiamata per fare il unfollow
+    suspend fun unFollowUser(targetId: Int) {
+        remoteDataSource.unFollowUser(targetId)
 
-        TODO()
+        //Update Cache
+        var updatedUser = getUser(targetId)
+        updatedUser.isYourFollowing = false
+        updateUserCache(updatedUser)
     }
 }

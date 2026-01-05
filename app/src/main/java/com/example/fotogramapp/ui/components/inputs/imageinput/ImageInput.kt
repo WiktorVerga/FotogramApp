@@ -58,6 +58,8 @@ fun ImageInput(
 ) {
 
     val viewModel: ImageInputViewModel = viewModel(key = id)
+
+    // == Gallery Image Picker Launcher ==
     val context = LocalContext.current
 
     val launcher = rememberLauncherForActivityResult(
@@ -69,6 +71,7 @@ fun ImageInput(
 
     }
 
+    // == Launch Effect ==
     LaunchedEffect(Unit) {
         if (initialImage != null) {
             viewModel.setInitialImage(initialImage)
@@ -89,13 +92,16 @@ fun ImageInput(
                 .padding(20.dp)
 
         ) {
+            // == Title ==
             Text(
                 title,
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.ExtraBold
             )
 
+
             if (!viewModel.loading) {
+                // == Launch Gallery Image Picker ==
                 TextButton(
                     onClick = {
                         viewModel.removeInsert()
@@ -113,14 +119,16 @@ fun ImageInput(
                     )
                 }
 
+                // == Error Handling ==
                 if (viewModel.hasError)
                     Text(
-                        "Immagine troppo grande",
+                        "Image too big",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.error
                     )
 
 
+                // == Show Selected Image ==
                 val bitmapPicked = viewModel.bitmap
                 val imageUri = viewModel.imageUri
 
@@ -143,8 +151,7 @@ fun ImageInput(
                             )
                         }
 
-
-
+                        // == Unselect Image Button ==
                         TextButton(
                             onClick = {
                                 viewModel.removeInsert()
@@ -161,6 +168,7 @@ fun ImageInput(
                     }
                 }
             } else {
+                // == Loading Handling ==
                 Box(
                     modifier = Modifier
                         .size(100.dp)

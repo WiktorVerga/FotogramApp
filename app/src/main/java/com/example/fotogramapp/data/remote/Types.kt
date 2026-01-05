@@ -25,9 +25,16 @@ data class UserImageParams(
 
 // == Post ==
 @Serializable
-data class Location(
+data class LocationBody(
     @SerialName("latitude") val latitude: Double,
     @SerialName("longitude") val longitude: Double
+)
+
+@Serializable
+data class PostBody(
+    @SerialName("contentText") val message: String,
+    @SerialName("contentPicture") val image: String,
+    @SerialName("location") val location: LocationBody? = null
 )
 
 

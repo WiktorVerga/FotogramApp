@@ -18,9 +18,12 @@ import com.example.fotogramapp.data.repository.PostRepository
 import com.example.fotogramapp.data.repository.SettingsRepository
 import com.example.fotogramapp.data.repository.UserRepository
 import com.example.fotogramapp.ui.theme.FotogramTheme
+import com.example.testing_apis.model.RemoteDataSource
 
 //DataStore
 private val Context.dataStore by preferencesDataStore(name = "settings")
+
+// == Local Providers ==
 val LocalAppDatabase = staticCompositionLocalOf<AppDatabase> {
     error("LocalAppDatabase not provided")
 }
@@ -42,11 +45,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        //Creating SettingsRepository
         val settingsDataStore = applicationContext.dataStore
         val settingsRepository = SettingsRepository(settingsDataStore)
 
         enableEdgeToEdge()
         setContent {
+            //Instance of db
             val db = remember {
                 Room.databaseBuilder(
                     application,
@@ -57,9 +62,12 @@ class MainActivity : ComponentActivity() {
                     .build()
             }
 
-            val userRepo = UserRepository(settingsRepository)
-            val postRepo = PostRepository(db, settingsRepository)
+            //Instances of Repositories
+            val remoteDataSource = RemoteDataSource()
+            val userRepo = UserRepository(settingsRepository, remoteDataSource)
+            val postRepo = PostRepository(db, settingsRepository, remoteDataSource)
 
+            //Local Providers for Dependency Injection
             CompositionLocalProvider(
                 LocalAppDatabase provides db,
                 LocalDataStore provides settingsRepository,

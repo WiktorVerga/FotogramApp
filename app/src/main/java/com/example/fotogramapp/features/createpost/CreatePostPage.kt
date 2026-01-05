@@ -70,6 +70,7 @@ fun CreatePostPage(modifier: Modifier = Modifier) {
 
             LargeHeadline("Create a New Post \uD83D\uDCDD")
 
+            // == Input Fields ==
             ImageInput(
                 id = "image",
                 title = "Pick an Image",
@@ -84,13 +85,13 @@ fun CreatePostPage(modifier: Modifier = Modifier) {
                 getSafeValue = viewModel.handleMessage
             )
 
-            //TODO: Map Input
             LocationInput(
                 id = "location",
                 title = "Pick a Location",
                 getSafeLocation = viewModel.handleLocation
             )
 
+            // == Button ==
             PrimaryButton(
                 modifier = modifier.padding(vertical = 50.dp),
                 text = "Publish",

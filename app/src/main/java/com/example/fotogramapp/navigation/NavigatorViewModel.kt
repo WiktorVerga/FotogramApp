@@ -9,10 +9,12 @@ import kotlinx.coroutines.launch
 
 class NavigatorViewModel(private val settingsRepository: SettingsRepository) : ViewModel() {
 
+    // == State ==
     var isFirstAccess by mutableStateOf(false)
         private set
 
 
+    // == Methods ==
     fun checkFirstAccess() {
         viewModelScope.launch {
             isFirstAccess = settingsRepository.isFirstAccess()
@@ -20,6 +22,7 @@ class NavigatorViewModel(private val settingsRepository: SettingsRepository) : V
     }
 }
 
+//NavDestination Extension to check if it's a specific route
 inline fun <reified T : Any> androidx.navigation.NavDestination?.isRoute(): Boolean {
     if (this == null) return false
 
