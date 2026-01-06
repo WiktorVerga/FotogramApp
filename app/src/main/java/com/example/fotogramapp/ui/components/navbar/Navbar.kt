@@ -18,16 +18,19 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.fotogramapp.LocalDataStore
+import com.example.fotogramapp.app.LocalNavController
 import com.example.fotogramapp.data.repository.SettingsRepository
 import com.example.fotogramapp.navigation.*
 import com.example.fotogramapp.ui.theme.CustomIcons
 
 @Composable
-fun Navbar(modifier: Modifier = Modifier, navController: NavController) {
+fun Navbar(modifier: Modifier = Modifier) {
+
+    val settingsRepository = LocalDataStore.current
+    val navController = LocalNavController.current
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
-    val settingsRepository = LocalDataStore.current
 
     val viewModel: NavbarViewModel = viewModel(
         factory = viewModelFactory {
@@ -36,6 +39,8 @@ fun Navbar(modifier: Modifier = Modifier, navController: NavController) {
             }
         }
     )
+
+
 
     // == Navbar Logic ==
     if (!(currentDestination.isRoute<SignUp>() || currentDestination.isRoute<CreatePost>() || currentDestination.isRoute<EditProfile>())) {

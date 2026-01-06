@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.fotogramapp.data.repository.SettingsRepository
 import com.example.fotogramapp.navigation.Profile
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class NavbarViewModel(

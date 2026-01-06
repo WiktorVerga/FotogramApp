@@ -56,7 +56,7 @@ fun FotogramApp(modifier: Modifier = Modifier) {
                     TopBar(navController = navController)
                 },
                 bottomBar = {
-                    Navbar(navController = navController)
+                    Navbar()
                 },
                 snackbarHost = {
                     SnackbarHost(hostState = snackbarHostState)
@@ -76,7 +76,7 @@ fun FotogramApp(modifier: Modifier = Modifier) {
                     TopBar(navController = navController)
                 },
                 bottomBar = {
-                    Navbar(navController = navController)
+                    Navbar()
                 },
                 snackbarHost = {
                     SnackbarHost(hostState = snackbarHostState)
