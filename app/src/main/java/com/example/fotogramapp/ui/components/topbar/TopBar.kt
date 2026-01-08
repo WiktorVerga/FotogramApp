@@ -12,6 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.fotogramapp.app.LocalNavController
 import com.example.fotogramapp.navigation.CreatePost
 import com.example.fotogramapp.navigation.Discover
 import com.example.fotogramapp.navigation.EditProfile
@@ -23,7 +24,8 @@ import com.example.fotogramapp.ui.theme.CustomIcons
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(modifier: Modifier = Modifier, navController: NavController) {
+fun TopBar(modifier: Modifier = Modifier) {
+    val navController = LocalNavController.current
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     var currentDestination = navBackStackEntry?.destination
 

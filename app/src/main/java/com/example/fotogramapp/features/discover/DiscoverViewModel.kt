@@ -16,8 +16,6 @@ import kotlinx.coroutines.launch
 import okio.IOException
 
 class DiscoverViewModel(
-    private val navController: NavController,
-    private val userRepo: UserRepository,
     private val postRepo: PostRepository,
     private val snackbarHostState: SnackbarHostState
 ) : ViewModel() {
@@ -50,7 +48,6 @@ class DiscoverViewModel(
 
     fun loadFeed(limit: Int? = null, seed: Int? = null) {
         viewModelScope.launch {
-            isRefreshing = true
             try {
                 postIds += postRepo.getFeed(
                     maxPostId = maxPostId,
@@ -58,7 +55,6 @@ class DiscoverViewModel(
                     seed = seed
                 )
                 offline = false
-                isRefreshing = false
             } catch (e: APIException) {
                 Log.d("DiscoverViewModel", e.message ?: "Unknown Error")
             } catch (e: ConnectTimeoutException) {

@@ -110,7 +110,6 @@ class RemoteDataSource(val sessionId: String = "") {
             return httpResponse
         } catch (e: ConnectException) {
             // Errore di connessione (offline, server irraggiungibile)
-            // Lancia un'eccezione personalizzata e più significativa per il resto dell'app
             throw IOException("Impossible to connect to the Server")
         }
     }

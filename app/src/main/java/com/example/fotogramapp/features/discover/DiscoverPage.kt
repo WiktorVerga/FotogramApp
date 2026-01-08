@@ -6,6 +6,7 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -45,8 +46,6 @@ fun DiscoverPage(modifier: Modifier = Modifier) {
         factory = viewModelFactory {
             initializer {
                 DiscoverViewModel(
-                    navController = navController,
-                    userRepo = userRepo,
                     postRepo = postRepo,
                     snackbarHostState = snackbarHostState
                 )
@@ -97,6 +96,7 @@ fun DiscoverPage(modifier: Modifier = Modifier) {
 
             LazyColumn (
                 modifier = Modifier
+                    .fillMaxWidth()
                     .pointerInput(Unit) {
                         detectDragGestures(
                             onDrag = { change, dragAmount ->
@@ -146,7 +146,7 @@ fun DiscoverPage(modifier: Modifier = Modifier) {
                         }
                     } else {
                         item {
-                            OfflineRetry(text = "Cannot refresh Feed") {
+                            OfflineRetry(modifier = Modifier.padding(vertical = 15.dp), text = "Cannot refresh Feed") {
                                 viewModel.loadFeed()
                             }
                         }

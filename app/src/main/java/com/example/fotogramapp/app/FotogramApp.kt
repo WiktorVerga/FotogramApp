@@ -53,7 +53,7 @@ fun FotogramApp(modifier: Modifier = Modifier) {
                 modifier = modifier
                     .fillMaxSize(),
                 topBar = {
-                    TopBar(navController = navController)
+                    TopBar()
                 },
                 bottomBar = {
                     Navbar()
@@ -73,7 +73,7 @@ fun FotogramApp(modifier: Modifier = Modifier) {
                 modifier = modifier
                     .fillMaxSize(),
                 topBar = {
-                    TopBar(navController = navController)
+                    TopBar()
                 },
                 bottomBar = {
                     Navbar()
