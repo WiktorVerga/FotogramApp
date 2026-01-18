@@ -17,7 +17,6 @@ import kotlinx.coroutines.launch
 class SignupViewModel(
     private val navController: NavController,
     private val userRepo: UserRepository,
-    private val postRepo: PostRepository,
     private val snackBarHostState: SnackbarHostState
 ) : ViewModel() {
 

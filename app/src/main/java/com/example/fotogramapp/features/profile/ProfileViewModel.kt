@@ -7,13 +7,10 @@ import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import com.example.fotogramapp.data.database.AppDatabase
+
 import com.example.fotogramapp.data.remote.APIException
 import com.example.fotogramapp.data.repository.PostRepository
-import com.example.fotogramapp.data.repository.SettingsRepository
 import com.example.fotogramapp.data.repository.UserRepository
-import com.example.fotogramapp.domain.model.Post
-import com.example.fotogramapp.domain.model.User
 import com.example.fotogramapp.navigation.EditProfile
 import io.ktor.client.network.sockets.ConnectTimeoutException
 import kotlinx.coroutines.delay

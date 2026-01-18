@@ -3,7 +3,7 @@ package com.example.fotogramapp.navigation
 import kotlinx.serialization.Serializable
 import com.example.fotogramapp.domain.model.User
 
-// == Route without Parameters ==
+// == Routes without Parameters ==
 @Serializable
 object SignUp
 
@@ -13,7 +13,7 @@ object Discover
 @Serializable
 object CreatePost
 
-// == Route with Parameters ==
+// == Routes with Parameters ==
 @Serializable
 data class Profile(val id: Int?)
 

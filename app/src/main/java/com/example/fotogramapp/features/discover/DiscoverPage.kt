@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -38,7 +39,6 @@ import kotlin.math.abs
 @Composable
 fun DiscoverPage(modifier: Modifier = Modifier) {
     val navController = LocalNavController.current
-    val userRepo = LocalUserRepository.current
     val postRepo = LocalPostRepository.current
     val snackbarHostState = LocalSnackbar.current
 
@@ -116,7 +116,8 @@ fun DiscoverPage(modifier: Modifier = Modifier) {
                                 }
                             }
                         )
-                    },
+                    }
+                    .offset(x = totalDx.dp),
                 verticalArrangement = Arrangement.spacedBy(30.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 state = lazyColState

@@ -39,7 +39,6 @@ fun SignupPage(modifier: Modifier = Modifier) {
 
     val navController = LocalNavController.current
     val userRepo = LocalUserRepository.current
-    val postRepo = LocalPostRepository.current
     val snackbarHostState = LocalSnackbar.current
 
     val viewModel: SignupViewModel = viewModel(
@@ -48,7 +47,6 @@ fun SignupPage(modifier: Modifier = Modifier) {
                 SignupViewModel(
                     navController = navController,
                     userRepo = userRepo,
-                    postRepo = postRepo,
                     snackBarHostState = snackbarHostState
                 )
             }
